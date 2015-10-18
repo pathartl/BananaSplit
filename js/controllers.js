@@ -151,6 +151,10 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$scope.currentQueueIndex = 0;
 	}
 
+	$scope.removeFromQueue = function(index) {
+		$rootScope.queue.splice(index, 1);
+	}
+
 	$scope.startQueue = function() {
 		$rootScope.encodingSegment = $rootScope.queue[$scope.currentQueueIndex];
 		$scope.segmentVideo();
