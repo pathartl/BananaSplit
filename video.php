@@ -91,18 +91,11 @@ function get_frame_capture( $file, $time, $output_name ) {
 		unlink('./' . $output_name . '.jpg');
 	}
 
-	$cmd = 'ffmpeg -ss ' . $time . ' -i ' . escapeshellarg($file) . ' -vframes 1 -q:v 2 ' . $output_name . '.jpg';
-
-	exec( $cmd, $output );
-
-	$fp = fopen('./' . $output_name . '.jpg', 'rb');
+	$cmd = 'ffmpeg -ss ' . $time . ' -i ' . escapeshellarg($file) . ' -an -loglevel -8 -vframes 1 -q:v 2 -f image2pipe -';
 
 	header("Content-Type: image/jpg");
-	header("Content-Length: " . filesize('./' . $output_name . '.jpg'));
 
-	fpassthru($fp);
-
-	exit;
+	passthru($cmd);
 
 }
 
