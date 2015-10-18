@@ -28,7 +28,7 @@ Banana Split uses a number of open source projects to work properly:
 
 * [AngularJS](https://angularjs.org/) - HTML enhanced for web apps!
 * [ffmpeg](https://www.ffmpeg.org/) - A complete, cross-platform solution to record, convert and stream audio and video.
-* [Twitter Bootstrap] - great UI boilerplate for modern web apps
+* [Twitter Bootstrap](http://getbootstrap.com/) - great UI boilerplate for modern web apps
 
 ### API
 
@@ -36,18 +36,22 @@ The API for Banana Split works via GET parameters. There are four main API funct
 
 #### Thumbnail Generation
 `video.php?f=<absolute path to video>&time=<time in seconds>&output=<output image name>`
+
 Returns: Image
 
 #### Directory Listings
 `browser.php?d=<full path to directory>`
+
 Returns: JSONP containing the listing of the specified directory
 
 #### Black Frame Detection
 `video.php?function=detect&f=<full path to file>`
+
 Returns: JSONP containing info about black frames
 
 #### Video Splitting
 `video.php?function=split&f=<full path to input file>&start=<start of segment in seconds>&end=<end of segment in seconds>&output_filename=<output video file name>`
+
 Returns: Output of ffmpeg formatted in JSONP
 
 ### License
