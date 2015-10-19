@@ -104,8 +104,11 @@
 				</span>
 				<input type="text" class="form-control" ng-model="segment.output">
 				<span class="input-group-btn">
-					<button class="btn btn-default" type="button" ng-click="addSegmentToQueue(segment)">
+					<button ng-if="segment.inQueue !== true" class="btn btn-default" type="button" ng-click="addSegmentToQueue(segment, $index)">
 						<span>Add To Queue</span>
+					</button>
+					<button ng-if="segment.inQueue === true" disabled="disabled" class="btn btn-default" type="button">
+						<span>Added!</span>
 					</button>
 				</span>
 			</div>

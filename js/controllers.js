@@ -115,12 +115,13 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		}
 	}
 
-	$scope.addSegmentToQueue = function(segment) {
+	$scope.addSegmentToQueue = function(segment, index) {
 		segment.name = $rootScope.currentVideo.name;
 		segment.path = $rootScope.currentVideo.path;
 		segment.status = 'pending';
 		$rootScope.queue.push(segment);
-		//console.log($rootScope.queue);
+
+		$scope.segments[index].inQueue = true;
 	}
 
 	BananaSplit.detectSplits($rootScope.currentVideo.path).then(function(response) {
