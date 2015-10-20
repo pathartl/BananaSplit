@@ -7,7 +7,12 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	if ( $rootScope.queue === undefined ) {
 		$rootScope.queue = [];
 	}
-	
+
+	$scope.queueVisible = false;
+
+	$scope.toggleQueue = function() {
+		$('body, #queue').toggleClass('slide');
+	}	
 
 	$scope.browseDirectory = function() {
 

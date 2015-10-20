@@ -38,13 +38,35 @@
 			vertical-align: middle !important;
 		}
 
+		#queue {
+			position: fixed;
+			left: 100%;
+			width: 100%;
+			transition: 0.25s all;
+			top: 0;
+			bottom: 0;
+		}
+
+		#queue.slide {
+			left: 0%;
+		}
+
+		body {
+			position: relative;
+			left: 0;
+			transition: 0.25s all;
+		}
+
+		body.slide {
+			left: -100%;
+		}
+
 	</style>
 </head>
 <body>
 	<div ng-app="bananaSplit" ng-controller="BananaSplitMainCtrl" class="container">
-		<div ng-view>
-
-		</div>
+		<div ng-view></div>
+		<div id="queue" ng-include src='"partials/queue.html"' ng-controller="BananaSplitQueueCtrl"></div>
 	</div>
 </body>
 </html>
