@@ -162,15 +162,19 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 .controller('BananaSplitQueueCtrl', function( $sce, $rootScope, $scope, BananaSplit, $routeParams ) {
 
-	if ( $scope.currentQueueIndex === undefined ) {
-		$scope.currentQueueIndex = 0;
-	}
-
 	$scope.removeFromQueue = function(index) {
 		$rootScope.queue.splice(index, 1);
 	}
 
 	$scope.startQueue = function() {
+		$scope.currentQueueIndex = 0;
+
+		$rootScope.queue.forEach(function(segment) {
+			if (segment.status != 'pending') {
+				$scope.currentQueueIndex++;
+			}
+		});
+
 		$rootScope.encodingSegment = $rootScope.queue[$scope.currentQueueIndex];
 		$scope.segmentVideo();
 	}
