@@ -49,6 +49,7 @@
 
 		#queue.slide {
 			left: 0%;
+			overflow-y: scroll;
 		}
 
 		body {
@@ -59,6 +60,7 @@
 
 		body.slide {
 			left: -100%;
+			overflow-y: hidden;
 		}
 
 	</style>
