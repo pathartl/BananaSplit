@@ -4,7 +4,17 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$rootScope.currentDirectory = '/';
 	}
 
-	if ( $rootScope.queue === undefined ) {
+	$scope.loadQueue = function() {
+		$rootScope.queue = JSON.parse(localStorage.getItem('queue'));
+	}
+
+	$scope.saveQueue = function() {
+		localStorage.setItem('queue', JSON.stringify($rootScope.queue));
+	}
+
+	$scope.loadQueue();
+
+	if ( $rootScope.queue === undefined || $rootScope.queue === null ) {
 		$rootScope.queue = [];
 	}
 
@@ -17,8 +27,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	$scope.browseDirectory = function() {
 
 		BananaSplit.browseDirectory($rootScope.currentDirectory).then(function(response) {
-
-			//console.log( response.data );
 
 			$rootScope.directoryList = {};
 			$rootScope.directoryList.directory = response.data.directory;
@@ -43,7 +51,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	}
 
 	$scope.$watch('currentDirectory', function() {
-		//console.log($rootScope.directoryList);
 		$scope.browseDirectory();
 	});
 
@@ -75,7 +82,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	}
 
 	$scope.nextSplit = function() {
-		//console.log('next');
 		if ( $scope.currentSplit != $scope.blackdetect.length - 1 ) {
 			$scope.currentSplit = $scope.currentSplit + 1;
 			$scope.setCurrentTime();
@@ -83,7 +89,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	}
 
 	$scope.prevSplit = function() {
-		//console.log('prev');
 		if ( $scope.currentSplit != 0 ) {
 			$scope.currentSplit = $scope.currentSplit - 1;
 			$scope.setCurrentTime();
@@ -97,7 +102,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 	$scope.addSplit = function() {
 		$scope.splits.push($scope.blackdetect[$scope.currentSplit].black_end);
-		//console.log($scope.splits);
 		$scope.createSegments();
 	}
 
@@ -125,7 +129,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 				$scope.segments.push(currentSegment);
 			}
 
-			//console.log($scope.segments);
 		}
 	}
 
@@ -136,6 +139,8 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$rootScope.queue.push(segment);
 
 		$scope.segments[index].inQueue = true;
+
+		$scope.saveQueue();
 	}
 
 	BananaSplit.detectSplits($rootScope.currentVideo.path).then(function(response) {
@@ -154,16 +159,20 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 		$scope.setCurrentTime();
 
-		//console.log($scope.blackdetect);
-
 	});
 
 })
 
 .controller('BananaSplitQueueCtrl', function( $sce, $rootScope, $scope, BananaSplit, $routeParams ) {
 
+	$scope.removeAllFromQueue = function() {
+		$rootScope.queue = [];
+		$scope.saveQueue();
+	}
+
 	$scope.removeFromQueue = function(index) {
 		$rootScope.queue.splice(index, 1);
+		$scope.saveQueue();
 	}
 
 	$scope.startQueue = function() {
@@ -183,11 +192,13 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$rootScope.encodingSegment.status = 'encoding';
 		BananaSplit.splitVideo($rootScope.encodingSegment).then(function(response) {
 			$rootScope.encodingSegment.status = 'complete';
-			//console.log(response);
-			//console.log(segment);
+
 			if ( $scope.currentQueueIndex + 1 < $rootScope.queue.length ) {
 				$scope.currentQueueIndex++;
 				$rootScope.encodingSegment = $rootScope.queue[$scope.currentQueueIndex];
+
+				$scope.saveQueue();
+
 				$scope.segmentVideo();
 			}
 		});
