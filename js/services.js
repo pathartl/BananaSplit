@@ -25,16 +25,16 @@ bananaSplit.factory('BananaSplit', function($http) {
 	return {
 
 		browseDirectory: function(directory) {
-			return UrlRequest('browser.php?d=' + directory);
+			return UrlRequest('browser.php?d=' + encodeURIComponent(directory));
 		},
 
 		detectSplits: function(file) {
-			return UrlRequest('video.php?function=detect&f=' + file);
+			return UrlRequest('video.php?function=detect&f=' + encodeURIComponent(file));
 		},
 
 		splitVideo: function(segment) {
-			return UrlRequest('video.php?function=split&f=' + segment.path + '&start=' + segment.start + '&end=' + segment.end + '&output=' + segment.output);
-		}
+			return UrlRequest('video.php?function=split&f=' + encodeURIComponent(segment.path) + '&start=' + segment.start + '&end=' + segment.end + '&output=' + encodeURIComponent(segment.output));
+		},
 
 	}
 

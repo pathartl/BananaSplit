@@ -55,6 +55,15 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	$scope.splits = [];
 	$scope.segments = [];
 
+	$scope.thumbnail = function(gapModifier) {
+		if ( $scope.blackdetect != undefined ) {
+			var imgUrl = 'video.php?function=thumbnail';
+			    imgUrl += '&time=' + ($scope.blackdetect[$scope.currentSplit].black_middle + ($scope.gap * gapModifier));
+			    imgUrl += '&f=' + encodeURIComponent($rootScope.currentVideo.path);
+			return imgUrl;
+		}
+	}
+
 	$scope.setCurrentTime = function() {
 		$scope.currentTime = ( $scope.blackdetect[$scope.currentSplit].black_middle / $scope.duration.in_seconds ) * 100;
 		$scope.currentTime = $scope.currentTime + "%";

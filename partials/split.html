@@ -41,19 +41,19 @@
 					<div class="col-xs-4 text-center">
 						<div class="panel panel-default">
 							<div class="panel-heading">-{{gap}} Seconds</div>
-							<img src="video.php?function=thumbnail&time={{blackdetect[currentSplit].black_middle - gap}}&f={{currentVideo.path}}&output=before" style="width:100%">
+							<img src="{{thumbnail(-1)}}" style="width:100%">
 						</div>
 					</div>
 					<div class="col-xs-4 text-center">
 						<div class="panel panel-default">
 							<div class="panel-heading">0 Seconds</div>
-							<img src="video.php?function=thumbnail&time={{blackdetect[currentSplit].black_middle}}&f={{currentVideo.path}}&output=current" style="width:100%">
+							<img src="{{thumbnail(0)}}" style="width:100%">
 						</div>
 					</div>
 					<div class="col-xs-4 text-center">
 						<div class="panel panel-default">
 							<div class="panel-heading">+{{gap}} Seconds</div>
-							<img src="video.php?function=thumbnail&time={{blackdetect[currentSplit].black_middle + gap}}&f={{currentVideo.path}}&output=after" style="width:100%">
+							<img src="{{thumbnail(1)}}" style="width:100%">
 						</div>
 					</div>
 

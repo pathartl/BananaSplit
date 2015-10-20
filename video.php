@@ -85,11 +85,7 @@ function format_blackdetect_line( $line ) {
 
 }
 
-function get_frame_capture( $file, $time, $output_name ) {
-
-	if (file_exists('./' . $output_name . '.jpg')) {
-		unlink('./' . $output_name . '.jpg');
-	}
+function get_frame_capture( $file, $time ) {
 
 	$cmd = 'ffmpeg -ss ' . $time . ' -i ' . escapeshellarg($file) . ' -an -loglevel -8 -vframes 1 -q:v 2 -f image2pipe -';
 
@@ -139,10 +135,7 @@ if ( isset($_GET['function']) ) {
  	if ( $function == 'detect' ) {
  		detect_black_frames( $file );
  	} else if ( $function == 'thumbnail' ) {
-
- 		$output_name = $_GET['output'];
-
- 		get_frame_capture( $_GET['f'], $_GET['time'], $output_name );
+ 		get_frame_capture( $_GET['f'], $_GET['time'] );
  	} else if ( $function == 'split' ) {
  		$start = $_GET['start'];
  		$end = $_GET['end'];

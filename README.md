@@ -35,7 +35,7 @@ Banana Split uses a number of open source projects to work properly:
 The API for Banana Split works via GET parameters. There are four main API functions
 
 #### Thumbnail Generation
-`video.php?f=<absolute path to video>&time=<time in seconds>&output=<output image name>`
+`video.php?f=<absolute path to video>&time=<time in seconds>`
 
 Returns: Image
 
