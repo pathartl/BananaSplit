@@ -20,7 +20,7 @@ In order to run Banana Split you need a web server running PHP. This server must
  - AVI doesn't play well with ffmpeg's video splitting, thus the video is automatically encoded to h.264 using libx264
 
 ### Version
-1.0.0
+1.1.0
 
 ### Tech
 
@@ -53,6 +53,19 @@ Returns: JSONP containing info about black frames
 `video.php?function=split&f=<full path to input file>&start=<start of segment in seconds>&end=<end of segment in seconds>&output_filename=<output video file name>`
 
 Returns: Output of ffmpeg formatted in JSONP
+
+### Changelog
+
+#### 1.1.0
+
+- Added Windows compatibility
+- Fixed a few UX/interface bugs
+- Allowed the queue to stay opened but hidden when using the app
+- Removed the need to write thumbnails to disk
+
+#### 1.0.0
+
+- Initial Release!
 
 ### License
 
