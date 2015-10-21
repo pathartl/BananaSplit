@@ -16,7 +16,12 @@ function detect_black_frames( $file ) {
 	
  	$file = escapeshellarg( $file );
 
- 	$cmd = 'ffmpeg -i ' . $file . ' -vf blackdetect=d=0.1:pix_th=.1 -f rawvideo -y /dev/null 2>&1';
+ 	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+ 		// Windows server, does not have /dev/null
+ 		$cmd = 'ffmpeg -i ' . $file . ' -vf blackdetect=d=0.1:pix_th=.1 -f rawvideo -y NUL 2>&1';
+ 	} else {
+ 		$cmd = 'ffmpeg -i ' . $file . ' -vf blackdetect=d=0.1:pix_th=.1 -f rawvideo -y /dev/null 2>&1';
+ 	}
 
  	exec( $cmd, $stdout );
 
@@ -74,11 +79,13 @@ function format_blackdetect_line( $line ) {
 
 	$blackdetect_data = explode(' ', $line);
 
-	$new_blackdetect_data;
+	$new_blackdetect_data = '';
 
 	foreach ( $blackdetect_data as $data_index => $data_item ) {
 		$exploded_data = explode(':', $data_item);
-		$new_blackdetect_data[$exploded_data[0]] = $exploded_data[1];
+		if ( array_key_exists(1, $exploded_data) ) {
+			$new_blackdetect_data[$exploded_data[0]] = $exploded_data[1];
+		}
 	}
 
 	return $new_blackdetect_data;
