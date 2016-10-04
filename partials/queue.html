@@ -1,82 +1,78 @@
-<div class="container">
-	<div class="col-xs-12">
+<div class="container-fluid">
+	<div class="page-header">
+		<h1>Queue <small>{{$root.queue.length}} segments in queue.</small></h1>
+	</div>
 
-		<div class="page-header">
-			<h1>Queue <small>{{$root.queue.length}} segments in queue.</small></h1>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-6">
-				<div class="form-group text-left">
-					<div class="button-group">
-						<a class="btn btn-default" ng-click="toggleQueue()">
-							<i class="glyphicon glyphicon-remove"></i>
-							Close Queue
-						</a>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-xs-6">
-				<div class="form-group text-right">
-					<div class="btn-group" role="group" aria-label="...">
-						<button class="btn btn-success" ng-click="startQueue()">Start Encoding</button>
-						<button type="button" class="btn btn-danger" ng-click="removeAllFromQueue()">Remove All</button>
-					</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="form-group text-left">
+				<div class="button-group">
+					<a class="btn btn-default" ng-click="toggleQueue()">
+						<i class="glyphicon glyphicon-remove"></i>
+						Close Queue
+					</a>
 				</div>
 			</div>
 		</div>
 
-		<div class="panel panel-default">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th></th>
-						<th class="text-center">#</th>
-						<th>Original Name</th>
-						<th>Segment Start</th>
-						<th>Segment End</th>
-						<th>Output Name</th>
-						<th style="width: 95px"></th>
-					</tr>
-				</thead>
-				<tr ng-repeat="segment in $root.queue track by $index" ng-class="{'info': segment.status == 'encoding', 'success': segment.status == 'complete'}">
-					<td class="text-center" style="font-size: 21px; width: 47px;">
-						<i class="fa fa-check" ng-if="segment.status == 'complete'"></i>
-						<i class="fa fa-cog fa-spin" ng-if="segment.status == 'encoding'"></i>
-					</td>
-					<td class="text-center" style="width: 47px">
-						{{$index + 1}}
-					</td>
-					<td>
-						{{segment.name}}
-					</td>
-					<td>
-						{{segment.start}}s
-					</td>
-					<td>
-						{{segment.end}}
-					</td>
-					<td>
-						<input type="text" class="form-control" ng-model="segment.output">
-					</td>
-					<td>
-						<div class="btn-group" role="group">
-							<button type="button" class="btn btn-danger btn-sm" ng-click="removeFromQueue($index)">
-								<i class="fa fa-trash"></i>
-								Remove
-							</button>
-						</div>
-					</td>
-				</tr>
-
-				<tr ng-if="$root.queue.length == 0">
-					<td colspan="7">
-						No segments are added to the queue. <a href="#/">Back to file browser</a>
-					</td>
-				</tr>
-			</table>
+		<div class="col-xs-6">
+			<div class="form-group text-right">
+				<div class="btn-group" role="group" aria-label="...">
+					<button class="btn btn-success" ng-click="startQueue()">Start Encoding</button>
+					<button type="button" class="btn btn-danger" ng-click="removeAllFromQueue()">Remove All</button>
+				</div>
+			</div>
 		</div>
+	</div>
 
+	<div class="panel panel-default">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th class="text-center">#</th>
+					<th>Original Name</th>
+					<th>Segment Start</th>
+					<th>Segment End</th>
+					<th>Output Name</th>
+					<th style="width: 95px"></th>
+				</tr>
+			</thead>
+			<tr ng-repeat="segment in $root.queue track by $index" ng-class="{'info': segment.status == 'encoding', 'success': segment.status == 'complete'}">
+				<td class="text-center" style="font-size: 21px; width: 47px;">
+					<i class="fa fa-check" ng-if="segment.status == 'complete'"></i>
+					<i class="fa fa-cog fa-spin" ng-if="segment.status == 'encoding'"></i>
+				</td>
+				<td class="text-center" style="width: 47px">
+					{{$index + 1}}
+				</td>
+				<td>
+					{{segment.name}}
+				</td>
+				<td>
+					{{segment.start}}s
+				</td>
+				<td>
+					{{segment.end}}
+				</td>
+				<td>
+					<input type="text" class="form-control" ng-model="segment.output">
+				</td>
+				<td>
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-danger btn-sm" ng-click="removeFromQueue($index)">
+							<i class="fa fa-trash"></i>
+							Remove
+						</button>
+					</div>
+				</td>
+			</tr>
+
+			<tr ng-if="$root.queue.length == 0">
+				<td colspan="7">
+					No segments are added to the queue. <a href="#/">Back to file browser</a>
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>

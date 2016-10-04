@@ -1,3 +1,11 @@
+function showLoading() {
+	$('.loading .modal').modal('show');
+}
+
+function hideLoading() {
+	$('.loading .modal').modal('hide');
+}
+
 bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope, BananaSplit, $routeParams, $location ) {
 
 	if ( $rootScope.currentDirectory === undefined ) {
@@ -26,26 +34,25 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 	$scope.browseDirectory = function() {
 
-		BananaSplit.browseDirectory($rootScope.currentDirectory).then(function(response) {
+		var response = BananaSplit.browseDirectory($rootScope.currentDirectory);
 
-			$rootScope.directoryList = {};
-			$rootScope.directoryList.directory = response.data.directory;
-			$rootScope.directoryList.files = [];
+		$rootScope.directoryList = {};
+		$rootScope.directoryList.directory = response.directory;
+		$rootScope.directoryList.files = [];
 
-			response.data.files.forEach(function(file) {
-				if ( file.name.indexOf('.') != 0 ) {
-					$rootScope.directoryList.files.push(file);
-				}
+		response.files.forEach(function(file) {
+			if ( file.name.indexOf('.') != 0 ) {
+				$rootScope.directoryList.files.push(file);
+			}
 
-				if ( file.name == '..' ) {
-					$rootScope.directoryList.parentDirectory = file;
-				}
-			});
-
+			if ( file.name == '..' ) {
+				$rootScope.directoryList.parentDirectory = file;
+			}
 		});
 	}
 
 	$scope.openFile = function( file ) {
+		showLoading();
 		$rootScope.currentVideo = file;
 		$location.path('/split');
 	}
@@ -69,16 +76,39 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 	$scope.thumbnail = function(gapModifier) {
 		if ( $scope.blackdetect != undefined ) {
-			var imgUrl = 'video.php?function=thumbnail';
-			    imgUrl += '&time=' + ($scope.blackdetect[$scope.currentSplit].black_middle + ($scope.gap * gapModifier));
-			    imgUrl += '&f=' + encodeURIComponent($rootScope.currentVideo.path);
-			return imgUrl;
+			var file = $rootScope.currentVideo.path;
+			var time = $scope.blackdetect[$scope.currentSplit].black_middle + ($scope.gap * gapModifier);
+
+			return BananaSplit.getThumbnail(file, time);
 		}
+	}
+
+	$scope.regenerateThumbnails = function() {
+		showLoading();
+
+		$('.frame-thumbnail').each(function() {
+			if ($scope.blackdetect != undefined) {
+				var modifier = parseInt($(this).attr('modifier'));
+
+				var file = $rootScope.currentVideo.path;
+				var time = $scope.blackdetect[$scope.currentSplit].black_middle + ($scope.gap * modifier);
+
+				$(this).attr('src', BananaSplit.getThumbnail(file, time));
+			}
+		});
+
+		hideLoading();
 	}
 
 	$scope.setCurrentTime = function() {
 		$scope.currentTime = ( $scope.blackdetect[$scope.currentSplit].black_middle / $scope.duration.in_seconds ) * 100;
 		$scope.currentTime = $scope.currentTime + "%";
+
+		clearTimeout($scope.thumbnailGenTimeout);
+
+		$scope.thumbnailGenTimeout = setTimeout(function() {
+			$scope.regenerateThumbnails();
+		}, 500);
 	}
 
 	$scope.nextSplit = function() {
@@ -143,23 +173,23 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$scope.saveQueue();
 	}
 
-	BananaSplit.detectSplits($rootScope.currentVideo.path).then(function(response) {
+	var splits = BananaSplit.detectSplits($rootScope.currentVideo.path);
 
-		$scope.console = response.data.ffmpeg_output;
-		$scope.blackdetect = response.data.blackdetect;
-		$scope.duration = response.data.duration;
+	$scope.console = splits.ffmpeg_output;
+	$scope.blackdetect = splits.blackdetect;
+	$scope.duration = splits.duration;
 
-		$scope.blackdetect.forEach(function(black) {
-			black.black_start = parseFloat(black.black_start);
-			black.black_end = parseFloat(black.black_end);
-			black.black_duration = parseFloat(black.black_duration);
+	$scope.blackdetect.forEach(function(black) {
+		black.black_start = parseFloat(black.black_start);
+		black.black_end = parseFloat(black.black_end);
+		black.black_duration = parseFloat(black.black_duration);
 
-			black.black_middle = black.black_start + (black.black_duration / 2);
-		});
-
-		$scope.setCurrentTime();
-
+		black.black_middle = black.black_start + (black.black_duration / 2);
 	});
+
+	$scope.setCurrentTime();
+
+	console.log(splits);
 
 })
 
@@ -190,18 +220,19 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 
 	$scope.segmentVideo = function() {
 		$rootScope.encodingSegment.status = 'encoding';
-		BananaSplit.splitVideo($rootScope.encodingSegment).then(function(response) {
-			$rootScope.encodingSegment.status = 'complete';
 
-			if ( $scope.currentQueueIndex + 1 < $rootScope.queue.length ) {
-				$scope.currentQueueIndex++;
-				$rootScope.encodingSegment = $rootScope.queue[$scope.currentQueueIndex];
+		BananaSplit.splitVideo($rootScope.encodingSegment);
 
-				$scope.saveQueue();
+		$rootScope.encodingSegment.status = 'complete';
 
-				$scope.segmentVideo();
-			}
-		});
+		if ( $scope.currentQueueIndex + 1 < $rootScope.queue.length ) {
+			$scope.currentQueueIndex++;
+			$rootScope.encodingSegment = $rootScope.queue[$scope.currentQueueIndex];
+
+			$scope.saveQueue();
+
+			$scope.segmentVideo();
+		}
 	}
 
 });

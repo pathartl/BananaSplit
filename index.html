@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Banana Split</title>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+        <script>
+            var jQuery = require('jquery');
+            var $ = jQuery;
+        </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.0/angular-route.min.js"></script>
+
+        <script src="js/services.js"></script>
+        <script src="js/controllers.js"></script>
+        <script src="js/routing.js"></script>
+
+        <style type="text/css">
+
+            .progress {
+                position: relative;
+                overflow: visible;
+            }
+
+            .progress .tooltip {
+                opacity: 1;
+                top: -32px;
+                transform: translateX(-50%);
+            }
+
+            .input-group {
+                margin-bottom: 10px;
+            }
+
+            td {
+                vertical-align: middle !important;
+            }
+
+            #queue {
+                position: fixed;
+                left: 100%;
+                width: 100%;
+                transition: 0.25s all;
+                top: 0;
+                bottom: 0;
+            }
+
+            #queue.slide {
+                left: 0%;
+                overflow-y: scroll;
+            }
+
+            body {
+                position: relative;
+                left: 0;
+                transition: 0.25s all;
+            }
+
+            body.slide {
+                left: -100%;
+                overflow-y: hidden;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+        <div ng-app="bananaSplit" ng-controller="BananaSplitMainCtrl">
+            <div ng-view></div>
+            <div id="queue" ng-include src='"partials/queue.html"' ng-controller="BananaSplitQueueCtrl"></div>
+        </div>
+
+        <div class="loading">
+            <div class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Loading...</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped active" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+
+    <script>
+        // You can also require other files to run in this process
+        var BrowserService = require('./browser.js');
+        var browser = new BrowserService();
+
+        var VideoService = require('./video.js');
+        var video = new VideoService();
+    </script>
+</html>

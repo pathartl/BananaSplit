@@ -1,1 +1,2 @@
-*.jpg
+node_modules
+thumbnail.jpg
