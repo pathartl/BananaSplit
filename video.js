@@ -6,6 +6,7 @@ const _ = require('lodash');
 const escapeshellarg = require('escapeshellarg');
 const ffmpeg = require('@ffmpeg-installer/ffmpeg').path;
 const spawnSync = require('child_process').spawnSync;
+const exec = require('child-process-promise').exec;
 const util = require('util');
 const fileType = require('file-type');
 
@@ -86,36 +87,11 @@ class VideoService {
 			ffmpeg_output: ''
 		}
 
-		var detect = spawnSync(ffmpeg, ffmpegArgs);
+		//var detect = spawnSync(ffmpeg, ffmpegArgs);
 
-		let stderr = detect.stderr.toString();
+		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
 
-		// exec(command, [], {}, (error, stdout, stderr) => {
-		// 	debugger;
-		// 	// stdout stuff
-		stderr = stderr.split('\r');
-
-		output.ffmpeg_output = stderr;
-
-		// Go through each line
-		for (let line of stderr) {
-			line = line.trim();
-
-			// If it's a blackdetect line, format it and add it to output
-			if (line.indexOf('[blackdetect @') === 0) {
-				output.blackdetect.push(this.formatBlackDetectLine(line));
-			}
-
-			// If it's a line starting with duration, let's format the duration
-			if (line.indexOf('Duration:') === 0) {
-				output.duration = this.formatDurationLine(line);
-			}
-		}
-
-		// 	debugger;
-		// });
-
-		return output;
+		return promise;
 	}
 
 	getFrameCapture(file, time) {

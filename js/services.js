@@ -39,6 +39,14 @@ bananaSplit.factory('BananaSplit', function($http) {
 
 		getThumbnail: function(file, time) {
 			return video.getFrameCapture(file, time);
+		},
+
+		formatBlackDetectLine: function(line) {
+			return video.formatBlackDetectLine(line);
+		},
+
+		formatDurationLine: function(line) {
+			return video.formatDurationLine(line);
 		}
 
 	}
