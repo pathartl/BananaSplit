@@ -55,8 +55,6 @@ class BrowserService {
 			}
 		}
 
-		console.log(output.files);
-
 		return output;
 	}
 

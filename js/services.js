@@ -25,7 +25,6 @@ bananaSplit.factory('BananaSplit', function($http) {
 	return {
 
 		browseDirectory: function(directory) {
-			console.log(directory);
 			return browser.browseDirectory(directory);
 		},
 

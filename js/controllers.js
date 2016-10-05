@@ -89,7 +89,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	$scope.regenerateThumbnails = function() {
 		if ($scope.processes.length > 0) {
 			for (let process of $scope.processes) {
-				console.log(process);
 				if (typeof process.kill === 'function') {
 					process.kill();
 				}
