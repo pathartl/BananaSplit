@@ -87,8 +87,6 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	}
 
 	$scope.regenerateThumbnails = function() {
-		showLoading();
-
 		if ($scope.processes.length > 0) {
 			for (let process of $scope.processes) {
 				console.log(process);
@@ -114,19 +112,13 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 				$scope.processes.push(thumbnailProcess.childProcess);
 			}
 		});
-
-		hideLoading();
 	}
 
 	$scope.setCurrentTime = function() {
 		$scope.currentTime = ( $scope.blackdetect[$scope.currentSplit].black_middle / $scope.duration.in_seconds ) * 100;
 		$scope.currentTime = $scope.currentTime + "%";
 
-		clearTimeout($scope.thumbnailGenTimeout);
-
-		$scope.thumbnailGenTimeout = setTimeout(function() {
-			$scope.regenerateThumbnails();
-		}, 500);
+		$scope.regenerateThumbnails();
 	}
 
 	$scope.nextSplit = function() {
@@ -227,9 +219,11 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 			black.black_middle = black.black_start + (black.black_duration / 2);
 		});
 
-		$scope.setCurrentTime();
-		$scope.gotoSplit(0);
+		$scope.$apply(() => {
+			$scope.setCurrentTime();
+		});
 
+		hideLoading();
 	});
 
 })

@@ -94,12 +94,10 @@ class VideoService {
 
 	createFrameCapture(file, time) {
 		let ffmpegArgs = [
-			'-i',
-			file,
-			'-c:v',
-			'mjpeg',
 			'-ss',
 			time,
+			'-i',
+			file,
 			'-vframes',
 			'1',
 			'./thumbnail-' + time + '.jpg',
@@ -121,7 +119,7 @@ class VideoService {
 
 			return util.format('data:%s;base64,%s', mimetype, frameData.toString('base64'));
 		} catch(err) {
-			
+
 		}
 	}
 
