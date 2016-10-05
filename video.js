@@ -87,27 +87,12 @@ class VideoService {
 			ffmpeg_output: ''
 		}
 
-		//var detect = spawnSync(ffmpeg, ffmpegArgs);
-
 		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
 
 		return promise;
 	}
 
-	getFrameCapture(file, time) {
-		console.log('generating thumbnail');
-		// let ffmpegArgs = this.generateArgs([
-		// 	'-ss ' + time,
-		// 	'-i ' + file,
-		// 	'-an',
-		// 	'-loglevel -8',
-		// 	'-vframes 1',
-		// 	'-c:v mjpeg',
-		// 	'-q:v 2',
-		// 	'pipe:0',
-		// 	'thumbnail.jpg'
-		// ]);
-
+	createFrameCapture(file, time) {
 		let ffmpegArgs = [
 			'-i',
 			file,
@@ -117,17 +102,27 @@ class VideoService {
 			time,
 			'-vframes',
 			'1',
-			'./thumbnail.jpg',
+			'./thumbnail-' + time + '.jpg',
 			'-y'
 		]
 
-		var frame = spawnSync(ffmpeg, ffmpegArgs);
+		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
 
-		var frameData = fs.readFileSync('./thumbnail.jpg');
+		return promise;
+	}
 
-		var mimetype = fileType(frameData).mime;
+	getFrameCapture(time) {
+		try {
+			var frameData = fs.readFileSync('./thumbnail-' + time + '.jpg');
 
-		return util.format('data:%s;base64,%s', mimetype, frameData.toString('base64'));
+			var mimetype = fileType(frameData).mime;
+
+			fs.unlink('./thumbnail-' + time + '.jpg');
+
+			return util.format('data:%s;base64,%s', mimetype, frameData.toString('base64'));
+		} catch(err) {
+			
+		}
 	}
 
 	createVideoSegment(file, start, end, outputFile) {

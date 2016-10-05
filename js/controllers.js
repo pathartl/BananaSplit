@@ -75,6 +75,7 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	$scope.currentTime = '100%';
 	$scope.splits = [];
 	$scope.segments = [];
+	$scope.processes = [];
 
 	$scope.thumbnail = function(gapModifier) {
 		if ( $scope.blackdetect != undefined ) {
@@ -88,14 +89,29 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 	$scope.regenerateThumbnails = function() {
 		showLoading();
 
-		$('.frame-thumbnail').each(function() {
+		if ($scope.processes.length > 0) {
+			for (let process of $scope.processes) {
+				console.log(process);
+				if (typeof process.kill === 'function') {
+					process.kill();
+				}
+			}
+		}
+
+		$scope.processes = [];
+
+		$('.frame-thumbnail').each((i, thumbnail) => {
 			if ($scope.blackdetect != undefined) {
-				var modifier = parseInt($(this).attr('modifier'));
+				var modifier = parseInt($(thumbnail).attr('modifier'));
 
 				var file = $rootScope.currentVideo.path;
 				var time = $scope.blackdetect[$scope.currentSplit].black_middle + ($scope.gap * modifier);
 
-				$(this).attr('src', BananaSplit.getThumbnail(file, time));
+				var thumbnailProcess = BananaSplit.generateThumbnail(file, time).then((process) => {
+					$(thumbnail).attr('src', BananaSplit.getThumbnail(time));
+				});
+
+				$scope.processes.push(thumbnailProcess.childProcess);
 			}
 		});
 
