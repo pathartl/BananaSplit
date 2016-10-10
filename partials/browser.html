@@ -39,7 +39,7 @@
 							{{file.name}}
 						</a>
 					</td>
-					<td ng-if="file.is_video">
+					<td ng-if="file.type == 'file' && file.is_video">
 						<a ng-click="openFile(file)">
 							{{file.name}}
 						</a>
