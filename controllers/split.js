@@ -93,7 +93,7 @@ bananaSplit.controller('BananaSplitSplitCtrl', function( $sce, $rootScope, $scop
 			keyframes = keyframes.concat($scope.splits);
 			keyframes.push($scope.duration.in_seconds);
 
-			for ( var i = 0; i < keyframes.length - 1; i++ ) {
+			for (var i = 0; i < keyframes.length - 1; i++) {
 				var currentSegment = {
 					start: keyframes[i],
 					end: keyframes[i + 1],

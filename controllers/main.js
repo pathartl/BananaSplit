@@ -34,7 +34,7 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$rootScope.directoryList.directory = response.directory;
 		$rootScope.directoryList.files = [];
 
-		response.files.forEach(function(file) {
+		for (let file of response.files) {
 			if ( file.name.indexOf('.') != 0 ) {
 				$rootScope.directoryList.files.push(file);
 			}
@@ -42,7 +42,7 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 			if ( file.name == '..' ) {
 				$rootScope.directoryList.parentDirectory = file;
 			}
-		});
+		}
 	}
 
 	$scope.openFile = function( file ) {
@@ -51,7 +51,7 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$location.path('/split');
 	}
 
-	$scope.$watch('currentDirectory', function() {
+	$scope.$watch('currentDirectory', () => {
 		$scope.browseDirectory();
 	});
 

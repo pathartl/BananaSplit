@@ -15,7 +15,7 @@ bananaSplit.factory('BananaSplit', function($http) {
 		callback += '_jsonp=JSON_CALLBACK';
 
 		var promise = $http.jsonp( route + callback )
-		    .success(function(data) {
+		    .success((data) => {
 		    	return data;
 		    });
 
