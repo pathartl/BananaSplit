@@ -23,7 +23,8 @@
   },
   "homepage": "https://github.com/pathartl/banana-split#readme",
   "devDependencies": {
-    "electron-prebuilt": "^1.2.0"
+    "electron-packager": "^8.1.0",
+    "electron-prebuilt": "^1.4.3"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.7",
