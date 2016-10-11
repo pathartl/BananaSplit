@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid queue">
 	<div class="page-header">
 		<h1>Queue <small>{{$root.queue.length}} segments in queue.</small></h1>
 	</div>
@@ -38,10 +38,10 @@
 					<th style="width: 95px"></th>
 				</tr>
 			</thead>
-			<tr ng-repeat="segment in $root.queue track by $index" ng-class="{'info': segment.status == 'encoding', 'success': segment.status == 'complete'}">
+			<tr ng-repeat="segment in $root.queue track by $index" ng-class="{'info': segment.status == 'encoding', 'success': segment.status == 'complete'}" class="segment" index="{{$index}}">
 				<td class="text-center" style="font-size: 21px; width: 47px;">
-					<i class="fa fa-check" ng-if="segment.status == 'complete'"></i>
-					<i class="fa fa-cog fa-spin" ng-if="segment.status == 'encoding'"></i>
+					<i class="fa fa-check" style="display: none"></i>
+					<i class="fa fa-cog fa-spin" style="display: none"></i>
 				</td>
 				<td class="text-center" style="width: 47px">
 					{{$index + 1}}

@@ -33,7 +33,7 @@ bananaSplit.factory('BananaSplit', function($http) {
 		},
 
 		splitVideo: function(segment) {
-			video.createVideoSegment(segment.path, segment.start, segment.end, segment.output);
+			return video.createVideoSegment(segment.path, segment.start, segment.end, segment.output);
 		},
 
 		generateThumbnail: function(file, time) {

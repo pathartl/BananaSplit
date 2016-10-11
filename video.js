@@ -136,7 +136,9 @@ class VideoService {
 			filePath + '/' + outputFile,
 		]
 
-		spawnSync(ffmpeg, ffmpegArgs);
+		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
+
+		return promise;
 	}
 }
 module.exports = VideoService;
