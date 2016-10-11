@@ -1,3 +1,5 @@
+'use strict';
+
 bananaSplit.config(function($routeProvider, $locationProvider) {
 	$routeProvider
 		.when(

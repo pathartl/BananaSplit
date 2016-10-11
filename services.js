@@ -1,4 +1,4 @@
-var bananaSplit = angular.module('bananaSplit', ['ngRoute']);
+'use strict';
 
 bananaSplit.factory('BananaSplit', function($http) {
 
@@ -15,7 +15,7 @@ bananaSplit.factory('BananaSplit', function($http) {
 		callback += '_jsonp=JSON_CALLBACK';
 
 		var promise = $http.jsonp( route + callback )
-		    .success(function(data) {
+		    .success((data) => {
 		    	return data;
 		    });
 
@@ -33,7 +33,7 @@ bananaSplit.factory('BananaSplit', function($http) {
 		},
 
 		splitVideo: function(segment) {
-			video.createVideoSegment(segment.path, segment.start, segment.end, segment.output);
+			return video.createVideoSegment(segment.path, segment.start, segment.end, segment.output);
 		},
 
 		generateThumbnail: function(file, time) {
