@@ -12,6 +12,12 @@
 		</span>
 		<input type="text" class="form-control" ng-model="currentDirectory" ng-change="browseDirectory()">
 		<span class="input-group-btn">
+			<a class="btn btn-default" ng-click="detectSplitsFromSelected()">
+				<i class="glyphicon glyphicon-flag"></i>
+				Detect Splits
+			</a>
+		</span>
+		<span class="input-group-btn">
 			<a class="btn btn-default" ng-click="toggleQueue()">
 				<i class="glyphicon glyphicon-th-list"></i>
 				Queue
@@ -25,6 +31,7 @@
 
 			<thead>
 				<tr>
+					<th class="text-center"><i class="glyphicon glyphicon-ok"></i></th>
 					<th>Name</th>
 					<th>Type</th>
 					<th>Size</th>
@@ -33,6 +40,9 @@
 
 			<tbody>
 				<tr ng-repeat="file in directoryList.files">
+					<td style="width: 36px; text-align: center;">
+						<input type="checkbox" ng-if="file.type == 'file' && file.is_video" ng-model="file.selectedInFileBrowser" />
+					</td>
 					<td ng-if="file.type == 'file' && !file.is_video">{{file.name}}</td>
 					<td ng-if="file.type == 'dir'">
 						<a ng-click="$root.currentDirectory = file.path">

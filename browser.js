@@ -16,7 +16,7 @@ class BrowserService {
 	}
 
 	isVideo(file) {
-		return true;
+		return /\.(mkv|mp4|avi|ts|divx|m4v)$/.test(file);
 	}
 
 	browseDirectory(directory) {
@@ -56,6 +56,10 @@ class BrowserService {
 		}
 
 		return output;
+	}
+
+	detectSplitsFromSelected() {
+		debugger;
 	}
 
 }

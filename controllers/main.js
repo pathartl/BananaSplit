@@ -51,6 +51,40 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$location.path('/split');
 	}
 
+	$scope.detectSplitsFromSelected = function() {
+		showLoading();
+
+		var splitDetectQueue = [];
+
+		for (let file of $rootScope.directoryList.files) {
+			if (file.selectedInFileBrowser == true) {
+				splitDetectQueue.push(file);
+			}
+		}
+
+		splitDetectQueue.forEach((file) => {
+			BananaSplit.detectSplits(file.path).then(() => {
+				file.splitsDetected = true;
+
+				let allSplitsDetected = true;
+
+				splitDetectQueue.forEach((file) => {
+					if (file.splitsDetected != true) {
+						allSplitsDetected = false;
+					}
+				});
+
+				if (allSplitsDetected) {
+					hideLoading();
+
+					setTimeout(function() {
+						$scope.browseDirectory();
+					}, 500);
+				}
+			});
+		});
+	}
+
 	$scope.$watch('currentDirectory', () => {
 		$scope.browseDirectory();
 	});
