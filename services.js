@@ -29,7 +29,21 @@ bananaSplit.factory('BananaSplit', function($http) {
 		},
 
 		detectSplits: function(file) {
-			return video.detectBlackFrames(file);
+			var data = video.detectSplits(file).then((data) => {
+				return data;
+			});
+
+			return data;
+		},
+
+		loadSplits: function(file) {
+			var data = video.loadSplits(file);
+
+			return data;
+		},
+
+		saveSplits: function(data, file) {
+			video.saveSplits(data, file);
 		},
 
 		splitVideo: function(segment) {

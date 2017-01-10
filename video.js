@@ -68,7 +68,7 @@ class VideoService {
 
 		let ffmpegArgs = [
 			'-i',
-			file,
+			'"' + file + '"',
 			'-vf',
 			'blackdetect=d=0.2:pix_th=.1',
 			'-f',
@@ -87,9 +87,9 @@ class VideoService {
 			ffmpeg_output: ''
 		}
 
-		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
+		var data = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
 
-		return promise;
+		return data;
 	}
 
 	createFrameCapture(file, time) {
@@ -97,7 +97,7 @@ class VideoService {
 			'-ss',
 			time,
 			'-i',
-			file,
+			'"' + file + '"',
 			'-vframes',
 			'1',
 			'./thumbnail-' + time + '.jpg',
@@ -139,6 +139,71 @@ class VideoService {
 		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));
 
 		return promise;
+	}
+
+	parseBlackDetectOutput(data) {
+		let stderr = data.stderr.split('\r');
+
+		let output = {
+			blackdetect: [],
+			duration: [],
+			ffmpeg_output: stderr
+		}
+
+		// Go through each line
+		for (let line of stderr) {
+			line = line.trim();
+
+			// If it's a blackdetect line, format it and add it to output
+			if (line.indexOf('[blackdetect @') === 0) {
+				output.blackdetect.push(this.formatBlackDetectLine(line));
+			}
+
+			// If it's a line starting with duration, let's format the duration
+			if (line.indexOf('Duration:') === 0) {
+				output.duration = this.formatDurationLine(line);
+			}
+		}
+
+		output.blackdetect.forEach((black) => {
+			black.black_start = parseFloat(black.black_start);
+			black.black_end = parseFloat(black.black_end);
+			black.black_duration = parseFloat(black.black_duration);
+
+			black.black_middle = black.black_start + (black.black_duration / 2);
+		});
+
+		return output;
+	}
+
+	detectSplits(file) {
+		let data = this.detectBlackFrames(file).then((output) => {
+			output = this.parseBlackDetectOutput(output);
+			this.saveSplits(output, file);
+
+			return output;
+		});
+
+		return data;
+	}
+
+	saveSplits(data, filename) {
+		let json = JSON.stringify(data);
+
+		fs.writeFileSync(filename + '.json', json, 'utf8');
+	}
+
+	loadSplits(filename) {
+		var data = false
+		
+		try {
+			var fileData = fs.readFileSync(filename + '.json', 'utf8');
+			data = JSON.parse(fileData);
+		} catch(err) {
+
+		}
+
+		return data;
 	}
 }
 module.exports = VideoService;

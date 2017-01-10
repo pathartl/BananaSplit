@@ -53,6 +53,7 @@ bananaSplit.controller('BananaSplitSplitCtrl', function( $sce, $rootScope, $scop
 		$scope.currentTime = $scope.currentTime + "%";
 
 		$scope.regenerateThumbnails();
+		$scope.createSegments();
 	}
 
 	$scope.nextSplit = function() {
@@ -77,11 +78,24 @@ bananaSplit.controller('BananaSplitSplitCtrl', function( $sce, $rootScope, $scop
 	$scope.addSplit = function() {
 		$scope.splits.push($scope.blackdetect[$scope.currentSplit].black_end);
 		$scope.createSegments();
+		$scope.saveSplitInfo();
 	}
 
 	$scope.removeSplit = function(splitindex) {
 		$scope.splits.splice(splitindex, 1);
 		$scope.createSegments();
+		$scope.saveSplitInfo();
+	}
+
+	$scope.saveSplitInfo = function() {
+		var output = {
+			blackdetect: $scope.blackdetect,
+			duration: $scope.duration,
+			ffmpeg_output: $scope.console,
+			splits: $scope.splits
+		}
+
+		BananaSplit.saveSplits(output, $rootScope.currentVideo.path);
 	}
 
 	$scope.createSegments = function() {
@@ -117,47 +131,33 @@ bananaSplit.controller('BananaSplitSplitCtrl', function( $sce, $rootScope, $scop
 		$scope.saveQueue();
 	}
 
-	BananaSplit.detectSplits($rootScope.currentVideo.path).then((data) => {
-		var stderr = data.stderr.split('\r');
+	var splits = BananaSplit.loadSplits($rootScope.currentVideo.path);
 
-		var output = {
-			blackdetect: [],
-			duration: [],
-			ffmpeg_output: stderr
+	if (splits === false) {
+		BananaSplit.detectSplits($rootScope.currentVideo.path).then((data) => {
+			$scope.console = data.ffmpeg_output;
+			$scope.blackdetect = data.blackdetect;
+			$scope.duration = data.duration;
+
+			$scope.$apply(() => {
+				$scope.setCurrentTime();
+			});
+
+			hideLoading();
+		});
+	} else {
+		$scope.console = splits.ffmpeg_output;
+		$scope.blackdetect = splits.blackdetect;
+		$scope.duration = splits.duration;
+
+		if (typeof splits.splits != 'undefined') {
+			$scope.splits = splits.splits;
+		} else {
+			$scope.splits = [];
 		}
 
-		// Go through each line
-		for (let line of stderr) {
-			line = line.trim();
-
-			// If it's a blackdetect line, format it and add it to output
-			if (line.indexOf('[blackdetect @') === 0) {
-				output.blackdetect.push(BananaSplit.formatBlackDetectLine(line));
-			}
-
-			// If it's a line starting with duration, let's format the duration
-			if (line.indexOf('Duration:') === 0) {
-				output.duration = BananaSplit.formatDurationLine(line);
-			}
-		}
-
-		$scope.console = output.ffmpeg_output;
-		$scope.blackdetect = output.blackdetect;
-		$scope.duration = output.duration;
-
-		$scope.blackdetect.forEach(function(black) {
-			black.black_start = parseFloat(black.black_start);
-			black.black_end = parseFloat(black.black_end);
-			black.black_duration = parseFloat(black.black_duration);
-
-			black.black_middle = black.black_start + (black.black_duration / 2);
-		});
-
-		$scope.$apply(() => {
-			$scope.setCurrentTime();
-		});
-
+		$scope.setCurrentTime();
 		hideLoading();
-	});
+	}
 
 })

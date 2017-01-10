@@ -29,7 +29,42 @@ bananaSplit.factory('BananaSplit', function($http) {
 		},
 
 		detectSplits: function(file) {
-			return video.detectBlackFrames(file);
+			var data = video.detectBlackFrames(file);
+
+			debugger;
+
+			var stderr = data.stderr.split('\r');
+
+			var output = {
+				blackdetect: [],
+				duration: [],
+				ffmpeg_output: stderr
+			}
+
+			// Go through each line
+			for (let line of stderr) {
+				line = line.trim();
+
+				// If it's a blackdetect line, format it and add it to output
+				if (line.indexOf('[blackdetect @') === 0) {
+					output.blackdetect.push(BananaSplit.formatBlackDetectLine(line));
+				}
+
+				// If it's a line starting with duration, let's format the duration
+				if (line.indexOf('Duration:') === 0) {
+					output.duration = BananaSplit.formatDurationLine(line);
+				}
+			}
+
+			output.blackdetect.forEach(function(black) {
+				black.black_start = parseFloat(black.black_start);
+				black.black_end = parseFloat(black.black_end);
+				black.black_duration = parseFloat(black.black_duration);
+
+				black.black_middle = black.black_start + (black.black_duration / 2);
+			});
+
+			return output;
 		},
 
 		splitVideo: function(segment) {
