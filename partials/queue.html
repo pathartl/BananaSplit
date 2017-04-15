@@ -15,8 +15,10 @@
 			</div>
 		</div>
 
-		<div class="col-xs-6">
+		<div class="col-xs-6 form-inline">
 			<div class="form-group text-right">
+				<label for="file-extension">File Extension</label>
+				<input class="form-control" type="text" id="file-extension" placeholder="mkv" ng-model="$root.outputFileExtension">
 				<div class="btn-group" role="group" aria-label="...">
 					<button class="btn btn-success" ng-click="startQueue()">Start Encoding</button>
 					<button type="button" class="btn btn-danger" ng-click="removeAllFromQueue()">Remove All</button>
@@ -56,11 +58,14 @@
 					{{segment.end}}
 				</td>
 				<td>
-					<input type="text" class="form-control" ng-model="segment.output">
+					<div class="input-group">
+						<input type="text" class="form-control" ng-model="segment.output">
+						<div class="input-group-addon">.{{$root.outputFileExtension}}</div>
+					</div>
 				</td>
 				<td>
 					<div class="btn-group" role="group">
-						<button type="button" class="btn btn-danger btn-sm" ng-click="removeFromQueue($index)">
+						<button type="button" class="btn btn-danger btn-sm" ng-click="removeFromQueue($index)" tabindex="-1">
 							<i class="fa fa-trash"></i>
 							Remove
 						</button>

@@ -70,7 +70,7 @@ class VideoService {
 			'-i',
 			'"' + file + '"',
 			'-vf',
-			'blackdetect=d=0.2:pix_th=.1',
+			'blackdetect=d=0.1:pix_th=.1',
 			'-f',
 			'null',
 			'-',
@@ -128,12 +128,12 @@ class VideoService {
 
 		let ffmpegArgs = [
 			'-ss', start,
-			'-i', file,
+			'-i', '"' + file + '"',
 			'-t', (end - start),
 			'-acodec', 'copy',
 			'-vcodec', 'libx264',
 			'-y',
-			filePath + '/' + outputFile,
+			'"' + filePath + '/' + outputFile + '"',
 		]
 
 		var promise = exec(ffmpeg + ' ' + ffmpegArgs.join(' '));

@@ -46,8 +46,8 @@ bananaSplit.factory('BananaSplit', function($http) {
 			video.saveSplits(data, file);
 		},
 
-		splitVideo: function(segment) {
-			return video.createVideoSegment(segment.path, segment.start, segment.end, segment.output);
+		splitVideo: function(segment, fileExtension) {
+			return video.createVideoSegment(segment.path, segment.start, segment.end, segment.output + '.' + fileExtension);
 		},
 
 		generateThumbnail: function(file, time) {

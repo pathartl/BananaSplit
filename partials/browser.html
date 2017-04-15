@@ -31,7 +31,9 @@
 
 			<thead>
 				<tr>
-					<th class="text-center"><i class="glyphicon glyphicon-ok"></i></th>
+					<th class="text-center">
+						<input type="checkbox" ng-change="toggleAllSelections()" ng-model="allSelected">
+					</th>
 					<th>Name</th>
 					<th>Type</th>
 					<th>Size</th>

@@ -51,6 +51,22 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 		$location.path('/split');
 	}
 
+	$scope.toggleAllSelections = function() {
+		if ($scope.allSelected == true) {
+			for (let file of $rootScope.directoryList.files) {
+				if (file.is_video) {
+					file.selectedInFileBrowser = true;
+				}
+			}
+		} else {
+			for (let file of $rootScope.directoryList.files) {
+				if (file.is_video) {
+					file.selectedInFileBrowser = false;
+				}
+			}
+		}
+	}
+
 	$scope.detectSplitsFromSelected = function() {
 		showLoading();
 
@@ -62,27 +78,47 @@ bananaSplit.controller('BananaSplitMainCtrl', function( $sce, $rootScope, $scope
 			}
 		}
 
-		splitDetectQueue.forEach((file) => {
-			BananaSplit.detectSplits(file.path).then(() => {
-				file.splitsDetected = true;
+		$scope.splitDetectQueueIndex = 0;
 
-				let allSplitsDetected = true;
+		$scope.progressBar = $('.loading .progress-bar');
 
-				splitDetectQueue.forEach((file) => {
-					if (file.splitsDetected != true) {
-						allSplitsDetected = false;
+		// Poor man's queueing
+		$scope.queueInterval = setInterval(function() {
+			var file = splitDetectQueue[$scope.splitDetectQueueIndex];
+
+			if (file.runningSplitsDetection != true && file.splitsDetected != true) {
+				file.runningSplitsDetection = true;
+
+				$scope.progressBar.css('width', (($scope.splitDetectQueueIndex / (splitDetectQueue.length - 1)) * 100) + '%');
+
+				BananaSplit.detectSplits(file.path).then(() => {
+					file.splitsDetected = true;
+
+					let allSplitsDetected = true;
+
+					splitDetectQueue.forEach((file) => {
+						if (file.splitsDetected != true) {
+							allSplitsDetected = false;
+						}
+					});
+
+					if (allSplitsDetected) {
+						hideLoading();
+
+						clearInterval($scope.queueInterval);
+
+						$scope.progressBar.css('width', '100%');
+
+						setTimeout(function() {
+							$scope.browseDirectory();
+						}, 500);
 					}
+
+					$scope.splitDetectQueueIndex++;
 				});
+			}
+		}, 500);
 
-				if (allSplitsDetected) {
-					hideLoading();
-
-					setTimeout(function() {
-						$scope.browseDirectory();
-					}, 500);
-				}
-			});
-		});
 	}
 
 	$scope.$watch('currentDirectory', () => {

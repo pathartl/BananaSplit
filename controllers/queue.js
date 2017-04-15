@@ -30,7 +30,7 @@ bananaSplit.controller('BananaSplitQueueCtrl', function( $sce, $rootScope, $scop
 		$('.queue .segment[index="' + $scope.currentQueueIndex + '"] .fa-cog').show();
 		$rootScope.encodingSegment.status = 'encoding';
 
-		BananaSplit.splitVideo($rootScope.encodingSegment).then(() => {
+		BananaSplit.splitVideo($rootScope.encodingSegment, $scope.outputFileExtension).then(() => {
 			$('.queue .segment[index="' + $scope.currentQueueIndex + '"]').removeClass('info').addClass('success');
 			$('.queue .segment[index="' + $scope.currentQueueIndex + '"] .fa-cog').hide();
 			$('.queue .segment[index="' + $scope.currentQueueIndex + '"] .fa-check').show();
