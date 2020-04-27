@@ -1,0 +1,46 @@
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+
+BleemSync-*.zip
+Publish/
+BleemSync.Payload/System/BleemSync/
+*.flag
+Payload/system/bleemsync/
+Payload/system/defaults/cover.png
+Payload/system/defaults/pcsx.cfg
+
+BleemSync/BleemSync.db
+System/Databases/regional.db
+BleemSync/Games/
+BleemSync/ui_menu.db
