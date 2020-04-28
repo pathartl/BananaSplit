@@ -35,21 +35,20 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileBrowserSplitContainer = new System.Windows.Forms.SplitContainer();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.Name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Type = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.LastModified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.QueueList = new System.Windows.Forms.ListView();
+            this.addFilesToQueueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFilesToQueueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.addFolderToQueueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
-            this.FileBrowserSplitContainer.Panel2.SuspendLayout();
             this.FileBrowserSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFilesToQueueToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -69,14 +68,14 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // FileBrowserSplitContainer
@@ -87,12 +86,8 @@
             // 
             // FileBrowserSplitContainer.Panel1
             // 
-            this.FileBrowserSplitContainer.Panel1.Controls.Add(this.treeView1);
+            this.FileBrowserSplitContainer.Panel1.Controls.Add(this.QueueList);
             this.FileBrowserSplitContainer.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
-            // 
-            // FileBrowserSplitContainer.Panel2
-            // 
-            this.FileBrowserSplitContainer.Panel2.Controls.Add(this.listView1);
             this.FileBrowserSplitContainer.Size = new System.Drawing.Size(800, 426);
             this.FileBrowserSplitContainer.SplitterDistance = 266;
             this.FileBrowserSplitContainer.TabIndex = 1;
@@ -103,40 +98,36 @@
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
-            // treeView1
+            // QueueList
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(266, 426);
-            this.treeView1.TabIndex = 0;
+            this.QueueList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.QueueList.HideSelection = false;
+            this.QueueList.Location = new System.Drawing.Point(0, 0);
+            this.QueueList.Name = "QueueList";
+            this.QueueList.Size = new System.Drawing.Size(266, 426);
+            this.QueueList.TabIndex = 0;
+            this.QueueList.UseCompatibleStateImageBehavior = false;
             // 
-            // listView1
+            // addFilesToQueueToolStripMenuItem
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.Name,
-            this.Type,
-            this.LastModified});
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(530, 426);
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.addFilesToQueueToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addFilesToQueueToolStripMenuItem1,
+            this.addFolderToQueueToolStripMenuItem});
+            this.addFilesToQueueToolStripMenuItem.Name = "addFilesToQueueToolStripMenuItem";
+            this.addFilesToQueueToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.addFilesToQueueToolStripMenuItem.Text = "File";
             // 
-            // Name
+            // addFilesToQueueToolStripMenuItem1
             // 
-            this.Name.Text = "Name";
+            this.addFilesToQueueToolStripMenuItem1.Name = "addFilesToQueueToolStripMenuItem1";
+            this.addFilesToQueueToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
+            this.addFilesToQueueToolStripMenuItem1.Text = "Add File(s) to Queue";
             // 
-            // Type
+            // addFolderToQueueToolStripMenuItem
             // 
-            this.Type.Text = "Type";
-            // 
-            // LastModified
-            // 
-            this.LastModified.Text = "Last Modified";
+            this.addFolderToQueueToolStripMenuItem.Name = "addFolderToQueueToolStripMenuItem";
+            this.addFolderToQueueToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.addFolderToQueueToolStripMenuItem.Text = "Add Folder to Queue";
             // 
             // MainForm
             // 
@@ -145,13 +136,12 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.FileBrowserSplitContainer);
             this.Controls.Add(this.menuStrip1);
-            //this.Name = "MainForm";
+            this.Name = "MainForm";
             this.Text = "BananaSplit";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.FileBrowserSplitContainer.Panel1.ResumeLayout(false);
-            this.FileBrowserSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).EndInit();
             this.FileBrowserSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -166,12 +156,11 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.SplitContainer FileBrowserSplitContainer;
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ColumnHeader Name;
-        private System.Windows.Forms.ColumnHeader Type;
-        private System.Windows.Forms.ColumnHeader LastModified;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ListView QueueList;
+        private System.Windows.Forms.ToolStripMenuItem addFilesToQueueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addFilesToQueueToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem addFolderToQueueToolStripMenuItem;
     }
 }
 
