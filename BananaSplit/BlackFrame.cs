@@ -8,8 +8,16 @@ namespace BananaSplit
 {
     public class BlackFrame
     {
-        public decimal Start { get; set; }
-        public decimal End { get; set; }
-        public decimal Duration { get; set; }
+        public Guid Id { get; set; }
+        public TimeSpan Start { get; set; }
+        public TimeSpan End { get; set; }
+        public TimeSpan Duration { get; set; }
+
+        public ReferenceFrame ReferenceFrame { get; set; }
+
+        public BlackFrame()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 }

@@ -34,14 +34,17 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FileBrowserSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.ReferenceImageList = new System.Windows.Forms.ImageList(this.components);
             this.QueueList = new System.Windows.Forms.ListView();
             this.addFilesToQueueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addFilesToQueueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToQueueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ReferenceImageListView = new System.Windows.Forms.ListView();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
+            this.FileBrowserSplitContainer.Panel2.SuspendLayout();
             this.FileBrowserSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,14 +71,14 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // FileBrowserSplitContainer
@@ -88,25 +91,33 @@
             // 
             this.FileBrowserSplitContainer.Panel1.Controls.Add(this.QueueList);
             this.FileBrowserSplitContainer.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel1_Paint);
+            // 
+            // FileBrowserSplitContainer.Panel2
+            // 
+            this.FileBrowserSplitContainer.Panel2.Controls.Add(this.ReferenceImageListView);
             this.FileBrowserSplitContainer.Size = new System.Drawing.Size(800, 426);
             this.FileBrowserSplitContainer.SplitterDistance = 266;
             this.FileBrowserSplitContainer.TabIndex = 1;
             // 
-            // imageList1
+            // ReferenceImageList
             // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.ReferenceImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.ReferenceImageList.ImageSize = new System.Drawing.Size(256, 256);
+            this.ReferenceImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // QueueList
             // 
+            this.QueueList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.FileName});
             this.QueueList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.QueueList.HideSelection = false;
             this.QueueList.Location = new System.Drawing.Point(0, 0);
             this.QueueList.Name = "QueueList";
+            this.QueueList.ShowItemToolTips = true;
             this.QueueList.Size = new System.Drawing.Size(266, 426);
             this.QueueList.TabIndex = 0;
             this.QueueList.UseCompatibleStateImageBehavior = false;
+            this.QueueList.View = System.Windows.Forms.View.Details;
             // 
             // addFilesToQueueToolStripMenuItem
             // 
@@ -129,6 +140,24 @@
             this.addFolderToQueueToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.addFolderToQueueToolStripMenuItem.Text = "Add Folder to Queue";
             // 
+            // FileName
+            // 
+            this.FileName.Text = "Filename";
+            this.FileName.Width = 260;
+            // 
+            // ReferenceImageListView
+            // 
+            this.ReferenceImageListView.CheckBoxes = true;
+            this.ReferenceImageListView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ReferenceImageListView.HideSelection = false;
+            this.ReferenceImageListView.LargeImageList = this.ReferenceImageList;
+            this.ReferenceImageListView.Location = new System.Drawing.Point(0, 0);
+            this.ReferenceImageListView.Name = "ReferenceImageListView";
+            this.ReferenceImageListView.Size = new System.Drawing.Size(530, 426);
+            this.ReferenceImageListView.SmallImageList = this.ReferenceImageList;
+            this.ReferenceImageListView.TabIndex = 0;
+            this.ReferenceImageListView.UseCompatibleStateImageBehavior = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -142,6 +171,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.FileBrowserSplitContainer.Panel1.ResumeLayout(false);
+            this.FileBrowserSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).EndInit();
             this.FileBrowserSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -156,11 +186,13 @@
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.SplitContainer FileBrowserSplitContainer;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ImageList ReferenceImageList;
         private System.Windows.Forms.ListView QueueList;
         private System.Windows.Forms.ToolStripMenuItem addFilesToQueueToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFilesToQueueToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem addFolderToQueueToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader FileName;
+        private System.Windows.Forms.ListView ReferenceImageListView;
     }
 }
 

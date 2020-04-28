@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BananaSplit.Extensions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,6 +17,7 @@ namespace BananaSplit
     {
         private SettingsForm SettingsForm;
         private List<QueueItem> QueueItems { get; set; }
+        private Thread ScanningThread;
 
         public MainForm()
         {
@@ -25,6 +28,7 @@ namespace BananaSplit
         private void MainForm_Load(object sender, EventArgs e)
         {
             addFilesToQueueToolStripMenuItem1.Click += AddFilesToQueueToolStripMenuItem1_Click;
+            QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
         }
 
         private void AddFilesToQueueToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -44,16 +48,74 @@ namespace BananaSplit
                 {
                     QueueItems.AddRange(openFileDialog.FileNames.Select(fn => new QueueItem(fn)));
 
-                    FFMPEG ffmpeg = new FFMPEG();
+                    ScanningThread = new Thread(() => {
+                        ScanQueueItems();
+                    });
 
-                    foreach (var item in QueueItems)
+                    ScanningThread.Start();
+                }
+            }
+        }
+
+        private void ScanQueueItems()
+        {
+            FFMPEG ffmpeg = new FFMPEG();
+
+            foreach (var item in QueueItems)
+            {
+                item.Scanned = true;
+                item.LastScanned = DateTime.Now;
+                item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName);
+
+                foreach (var frame in item.BlackFrames)
+                {
+                    frame.ReferenceFrame = new ReferenceFrame();
+                    frame.ReferenceFrame.Data = ffmpeg.ExtractFrame(item.FileName, frame.End.Add(new TimeSpan(0, 0, 2)));
+                }
+
+                AddItemToQueue(item);
+            }
+        }
+
+        private void AddItemToQueue(QueueItem item)
+        {
+            QueueList.Invoke(
+                new MethodInvoker(
+                    delegate () {
+                        QueueList.Items.Add(new ListViewItem()
+                        {
+                            Text = Path.GetFileName(item.FileName),
+                            ToolTipText = item.FileName,
+                            Tag = item
+                        });
+                    }
+                )
+            );
+        }
+
+        private void RenderReferenceImagesListView(object sender, EventArgs e)
+        {
+            if (QueueList.SelectedItems.Count > 0)
+            {
+                var selectedItem = (QueueItem)QueueList.SelectedItems[0].Tag;
+
+                foreach (var frame in selectedItem.BlackFrames)
+                {
+                    if (frame.ReferenceFrame.Data.Length > 0)
                     {
-                        ffmpeg.DetectBlackFrames(item.FileName);
+                        var bmp = Utilities.BytesToImage(frame.ReferenceFrame.Data);
+
+                        ReferenceImageList.Add(bmp, frame.Id.ToString());
+
+                        ReferenceImageListView.Items.Add(frame.Id.ToString(), "Test", frame.Id.ToString());
+                        //ListViewItem referenceImageListViewItem = ReferenceImageListView.Items.Add("TEST", frame.Id.ToString());
                     }
                 }
             }
-
-            MessageBox.Show(fileContent, "File Content at path: " + filePath, MessageBoxButtons.OK);
+            else
+            {
+                ReferenceImageListView.Clear();
+            }
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -66,6 +128,5 @@ namespace BananaSplit
         {
 
         }
-
     }
 }

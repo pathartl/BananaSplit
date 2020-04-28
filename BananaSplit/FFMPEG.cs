@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +20,24 @@ namespace BananaSplit
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.FileName = "ffmpeg.exe";
+            Process.StartInfo.CreateNoWindow = true;
+        }
+
+        public byte[] ExtractFrame(string filePath, TimeSpan time)
+        {
+            var timespan = String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
+
+            Process.StartInfo.Arguments = $"-ss {timespan} -i \"{filePath}\" -vframes 1 -c:v png -f image2pipe -";
+            Process.StartInfo.RedirectStandardOutput = true;
+
+            Process.Start();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Process.StandardOutput.BaseStream.CopyTo(ms);
+                var blah = Process.StandardOutput.ReadToEnd();
+                return ms.ToArray();
+            }
         }
 
         public ICollection<BlackFrame> DetectBlackFrames(string filePath)
@@ -51,9 +70,9 @@ namespace BananaSplit
                     Decimal.TryParse(match.Groups["end"].Value, out end);
                     Decimal.TryParse(match.Groups["duration"].Value, out duration);
 
-                    frame.Start = start;
-                    frame.End = end;
-                    frame.Duration = duration;
+                    frame.Start = TimeSpan.FromSeconds((double)start);
+                    frame.End = TimeSpan.FromSeconds((double)end);
+                    frame.Duration = TimeSpan.FromSeconds((double)duration);
 
                     frames.Add(frame);
                 }
