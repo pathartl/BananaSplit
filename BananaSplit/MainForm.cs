@@ -61,20 +61,55 @@ namespace BananaSplit
         {
             FFMPEG ffmpeg = new FFMPEG();
 
+            SetStatusBarProgressBarValue(0, QueueItems.Count);
+
+            var i = 0;
+
             foreach (var item in QueueItems)
             {
+                i++;
+
+                SetStatusBarProgressBarValue(i, QueueItems.Count);
+                SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
                 item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName);
 
                 foreach (var frame in item.BlackFrames)
                 {
+                    var referenceFramePosition = frame.End.Add(new TimeSpan(0, 0, 2));
+                    SetStatusBarLabelValue($"Generating frame at {referenceFramePosition}");
                     frame.ReferenceFrame = new ReferenceFrame();
-                    frame.ReferenceFrame.Data = ffmpeg.ExtractFrame(item.FileName, frame.End.Add(new TimeSpan(0, 0, 2)));
+                    frame.ReferenceFrame.Data = ffmpeg.ExtractFrame(item.FileName, referenceFramePosition);
                 }
 
                 AddItemToQueue(item);
             }
+
+            SetStatusBarLabelValue("Done!");
+        }
+
+        private void SetStatusBarProgressBarValue(int value, int maximum)
+        {
+            StatusBar.Invoke(
+                new MethodInvoker(
+                    delegate () {
+                        StatusBarProgressBar.Value = value;
+                        StatusBarProgressBar.Maximum = maximum;
+                    }
+                )
+            );
+        }
+
+        private void SetStatusBarLabelValue(string value)
+        {
+            StatusBar.Invoke(
+                new MethodInvoker(
+                    delegate () {
+                        StatusBarLabel.Text = value;
+                    }
+                )
+            );
         }
 
         private void AddItemToQueue(QueueItem item)
