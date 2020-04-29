@@ -142,8 +142,12 @@ namespace BananaSplit
 
                         ReferenceImageList.Add(bmp, frame.Id.ToString());
 
-                        ReferenceImageListView.Items.Add(frame.Id.ToString(), "Test", frame.Id.ToString());
-                        //ListViewItem referenceImageListViewItem = ReferenceImageListView.Items.Add("TEST", frame.Id.ToString());
+                        ReferenceImageListView.Items.Add(new ListViewItem()
+                        {
+                            ImageKey = frame.Id.ToString(),
+                            Tag = frame,
+                            Name = frame.Id.ToString()
+                        });
                     }
                 }
             }
@@ -162,6 +166,20 @@ namespace BananaSplit
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void ReferenceImageListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in ReferenceImageListView.Items)
+            {
+                if (item.Selected)
+                {
+                    item.Selected = false;
+                    item.Checked = !item.Checked;
+
+                    ((BlackFrame)item.Tag).Selected = item.Checked;
+                }
+            }
         }
     }
 }

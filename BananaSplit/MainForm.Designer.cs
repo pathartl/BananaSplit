@@ -44,12 +44,17 @@
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.StatusBarProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.StatusBarLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
             this.FileBrowserSplitContainer.Panel2.SuspendLayout();
             this.FileBrowserSplitContainer.SuspendLayout();
             this.StatusBar.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -109,7 +114,7 @@
             // FileBrowserSplitContainer
             // 
             this.FileBrowserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FileBrowserSplitContainer.Location = new System.Drawing.Point(0, 24);
+            this.FileBrowserSplitContainer.Location = new System.Drawing.Point(3, 3);
             this.FileBrowserSplitContainer.Margin = new System.Windows.Forms.Padding(3, 3, 3, 50);
             this.FileBrowserSplitContainer.Name = "FileBrowserSplitContainer";
             // 
@@ -121,8 +126,8 @@
             // FileBrowserSplitContainer.Panel2
             // 
             this.FileBrowserSplitContainer.Panel2.Controls.Add(this.ReferenceImageListView);
-            this.FileBrowserSplitContainer.Size = new System.Drawing.Size(800, 315);
-            this.FileBrowserSplitContainer.SplitterDistance = 266;
+            this.FileBrowserSplitContainer.Size = new System.Drawing.Size(794, 281);
+            this.FileBrowserSplitContainer.SplitterDistance = 264;
             this.FileBrowserSplitContainer.TabIndex = 1;
             // 
             // QueueList
@@ -134,7 +139,7 @@
             this.QueueList.Location = new System.Drawing.Point(0, 0);
             this.QueueList.Name = "QueueList";
             this.QueueList.ShowItemToolTips = true;
-            this.QueueList.Size = new System.Drawing.Size(266, 315);
+            this.QueueList.Size = new System.Drawing.Size(264, 281);
             this.QueueList.TabIndex = 0;
             this.QueueList.UseCompatibleStateImageBehavior = false;
             this.QueueList.View = System.Windows.Forms.View.Details;
@@ -152,10 +157,11 @@
             this.ReferenceImageListView.LargeImageList = this.ReferenceImageList;
             this.ReferenceImageListView.Location = new System.Drawing.Point(0, 0);
             this.ReferenceImageListView.Name = "ReferenceImageListView";
-            this.ReferenceImageListView.Size = new System.Drawing.Size(530, 315);
+            this.ReferenceImageListView.Size = new System.Drawing.Size(526, 281);
             this.ReferenceImageListView.SmallImageList = this.ReferenceImageList;
             this.ReferenceImageListView.TabIndex = 0;
             this.ReferenceImageListView.UseCompatibleStateImageBehavior = false;
+            this.ReferenceImageListView.SelectedIndexChanged += new System.EventHandler(this.ReferenceImageListView_SelectedIndexChanged);
             // 
             // ReferenceImageList
             // 
@@ -185,13 +191,42 @@
             this.StatusBarLabel.Size = new System.Drawing.Size(84, 17);
             this.StatusBarLabel.Text = "StatusBarLabel";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.panel3);
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(0, 25, 0, 0);
+            this.panel1.Size = new System.Drawing.Size(800, 339);
+            this.panel1.TabIndex = 4;
+            // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 312);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(800, 27);
+            this.panel2.TabIndex = 5;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.FileBrowserSplitContainer);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(0, 25);
+            this.panel3.Name = "panel3";
+            this.panel3.Padding = new System.Windows.Forms.Padding(3);
+            this.panel3.Size = new System.Drawing.Size(800, 287);
+            this.panel3.TabIndex = 1;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 361);
-            this.Controls.Add(this.FileBrowserSplitContainer);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.StatusBar);
             this.Name = "MainForm";
             this.Text = "BananaSplit";
@@ -204,6 +239,8 @@
             this.FileBrowserSplitContainer.ResumeLayout(false);
             this.StatusBar.ResumeLayout(false);
             this.StatusBar.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -226,6 +263,9 @@
         private System.Windows.Forms.StatusStrip StatusBar;
         private System.Windows.Forms.ToolStripProgressBar StatusBarProgressBar;
         private System.Windows.Forms.ToolStripStatusLabel StatusBarLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }
 

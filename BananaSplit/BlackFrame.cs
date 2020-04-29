@@ -14,6 +14,7 @@ namespace BananaSplit
         public TimeSpan Duration { get; set; }
 
         public ReferenceFrame ReferenceFrame { get; set; }
+        public bool Selected { get; set; }
 
         public BlackFrame()
         {
