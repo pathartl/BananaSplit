@@ -23,6 +23,22 @@ namespace BananaSplit
             Process.StartInfo.CreateNoWindow = true;
         }
 
+        public bool IsMatroska(string filePath)
+        {
+            Process.StartInfo.FileName = "ffprobe.exe";
+            Process.StartInfo.Arguments = $"\"{filePath}\"";
+
+            Process.Start();
+
+            var output = Process.StandardError.ReadToEnd();
+
+            string pattern = @"^Input #\d+, matroska";
+
+            Regex regex = new Regex(pattern, RegexOptions.Multiline);
+
+            return regex.IsMatch(output);
+        }
+
         public byte[] ExtractFrame(string filePath, TimeSpan time)
         {
             var timespan = String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
