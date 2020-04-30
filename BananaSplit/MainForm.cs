@@ -27,7 +27,7 @@ namespace BananaSplit
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            addFilesToQueueToolStripMenuItem1.Click += AddFilesToQueueToolStripMenuItem1_Click;
+            AddFilesToQueueMenuItem.Click += AddFilesToQueueToolStripMenuItem1_Click;
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
         }
 
@@ -161,11 +161,6 @@ namespace BananaSplit
         {
             SettingsForm = new SettingsForm();
             SettingsForm.Show();
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void ReferenceImageListView_SelectedIndexChanged(object sender, EventArgs e)
