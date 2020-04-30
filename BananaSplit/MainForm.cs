@@ -19,6 +19,26 @@ namespace BananaSplit
         private List<QueueItem> QueueItems { get; set; }
         private Thread ScanningThread;
 
+        private string[] SupportedExtensions =
+        {
+            ".mkv",
+            ".mp4",
+            ".avi",
+            ".webm",
+            ".mpg",
+            ".mp2",
+            ".mpeg",
+            ".mpe",
+            ".mpv",
+            ".ogg",
+            ".wmv",
+            ".mov",
+            ".flv",
+            ".m4v",
+            ".m4p",
+            ".ts"
+        };
+
         public MainForm()
         {
             InitializeComponent();
@@ -27,18 +47,18 @@ namespace BananaSplit
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            AddFilesToQueueMenuItem.Click += AddFilesToQueueToolStripMenuItem1_Click;
+            AddFilesToQueueMenuItem.Click += AddFilesToQueueDialog;
+            AddFolderToQueueMenuItem.Click += AddFolderToQueueDialog;
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
         }
 
-        private void AddFilesToQueueToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void AddFilesToQueueDialog(object sender, EventArgs e)
         {
             var fileContent = string.Empty;
             var filePath = string.Empty;
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
@@ -47,6 +67,33 @@ namespace BananaSplit
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     QueueItems.AddRange(openFileDialog.FileNames.Select(fn => new QueueItem(fn)));
+
+                    ScanningThread = new Thread(() => {
+                        ScanQueueItems();
+                    });
+
+                    ScanningThread.Start();
+                }
+            }
+        }
+
+        private void AddFolderToQueueDialog(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog openFolderDialog = new FolderBrowserDialog())
+            {
+                var result = openFolderDialog.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(openFolderDialog.SelectedPath))
+                {
+                    string[] files = Directory.GetFiles(openFolderDialog.SelectedPath);
+
+                    foreach (var file in files)
+                    {
+                        if (SupportedExtensions.Contains(Path.GetExtension(file)))
+                        {
+                            QueueItems.Add(new QueueItem(file));
+                        }
+                    }
 
                     ScanningThread = new Thread(() => {
                         ScanQueueItems();

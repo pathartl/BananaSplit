@@ -45,12 +45,15 @@ namespace BananaSplit
 
             Process.StartInfo.Arguments = $"-ss {timespan} -i \"{filePath}\" -vframes 1 -c:v png -f image2pipe -";
             Process.StartInfo.RedirectStandardOutput = true;
+            Process.StartInfo.RedirectStandardError = false;
 
             Process.Start();
 
             using (MemoryStream ms = new MemoryStream())
             {
                 Process.StandardOutput.BaseStream.CopyTo(ms);
+
+                Process.WaitForExit();
                 return ms.ToArray();
             }
         }
@@ -59,12 +62,15 @@ namespace BananaSplit
         {
             var frames = new List<BlackFrame>();
 
+            Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d=0.04:pix_th=.01 -f rawvideo -y /NUL";
 
             Process.Start();
 
             // ffmpeg uses stderr for some reason
             var output = Process.StandardError.ReadToEnd();
+
+            Process.WaitForExit();
 
             string pattern = @"(?:blackdetect.+)(?:black_start:)(?<start>\d+(?:.\d+)) (?:black_end:)(?<end>\d+(?:.\d+)) (?:black_duration:)(?<duration>\d+(?:.\d+))";
 
@@ -93,8 +99,6 @@ namespace BananaSplit
                 }
                 catch { }
             }
-
-            Process.WaitForExit();
 
             return frames;
         }
