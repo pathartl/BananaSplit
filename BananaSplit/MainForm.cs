@@ -21,22 +21,22 @@ namespace BananaSplit
 
         private string[] SupportedExtensions =
         {
-            ".mkv",
-            ".mp4",
             ".avi",
-            ".webm",
-            ".mpg",
+            ".flv",
+            ".m4p",
+            ".m4v",
+            ".mkv",
+            ".mov",
             ".mp2",
-            ".mpeg",
+            ".mp4",
             ".mpe",
+            ".mpeg",
+            ".mpg",
             ".mpv",
             ".ogg",
-            ".wmv",
-            ".mov",
-            ".flv",
-            ".m4v",
-            ".m4p",
-            ".ts"
+            ".ts",
+            ".webm",
+            ".wmv"
         };
 
         public MainForm()
@@ -59,7 +59,7 @@ namespace BananaSplit
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.Filter = $"Video Files (*{String.Join(",*", SupportedExtensions)})|*{String.Join(";*", SupportedExtensions)}";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
                 openFileDialog.Multiselect = true;
