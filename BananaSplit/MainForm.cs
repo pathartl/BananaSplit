@@ -193,7 +193,8 @@ namespace BananaSplit
                         {
                             ImageKey = frame.Id.ToString(),
                             Tag = frame,
-                            Name = frame.Id.ToString()
+                            Name = frame.Id.ToString(),
+                            Text = frame.End.ToString()
                         });
                     }
                 }
