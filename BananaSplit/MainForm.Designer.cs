@@ -47,6 +47,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.ProcessQueueButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
@@ -54,6 +55,7 @@
             this.FileBrowserSplitContainer.SuspendLayout();
             this.StatusBar.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -114,6 +116,7 @@
             // FileBrowserSplitContainer
             // 
             this.FileBrowserSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FileBrowserSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.FileBrowserSplitContainer.Location = new System.Drawing.Point(3, 3);
             this.FileBrowserSplitContainer.Margin = new System.Windows.Forms.Padding(3, 3, 3, 50);
             this.FileBrowserSplitContainer.Name = "FileBrowserSplitContainer";
@@ -204,6 +207,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.ProcessQueueButton);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 312);
             this.panel2.Name = "panel2";
@@ -219,6 +223,18 @@
             this.panel3.Padding = new System.Windows.Forms.Padding(3);
             this.panel3.Size = new System.Drawing.Size(800, 287);
             this.panel3.TabIndex = 1;
+            // 
+            // ProcessQueueButton
+            // 
+            this.ProcessQueueButton.AutoSize = true;
+            this.ProcessQueueButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.ProcessQueueButton.Location = new System.Drawing.Point(710, 0);
+            this.ProcessQueueButton.Name = "ProcessQueueButton";
+            this.ProcessQueueButton.Size = new System.Drawing.Size(90, 27);
+            this.ProcessQueueButton.TabIndex = 0;
+            this.ProcessQueueButton.Text = "Process Queue";
+            this.ProcessQueueButton.UseVisualStyleBackColor = true;
+            this.ProcessQueueButton.Click += new System.EventHandler(this.ProcessQueueButton_Click);
             // 
             // MainForm
             // 
@@ -240,6 +256,8 @@
             this.StatusBar.ResumeLayout(false);
             this.StatusBar.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -266,6 +284,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Button ProcessQueueButton;
     }
 }
 

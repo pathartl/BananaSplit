@@ -51,7 +51,6 @@ namespace BananaSplit
             using (MemoryStream ms = new MemoryStream())
             {
                 Process.StandardOutput.BaseStream.CopyTo(ms);
-                var blah = Process.StandardOutput.ReadToEnd();
                 return ms.ToArray();
             }
         }

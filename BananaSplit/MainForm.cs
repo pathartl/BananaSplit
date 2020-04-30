@@ -181,5 +181,29 @@ namespace BananaSplit
                 }
             }
         }
+
+        private void ProcessQueueButton_Click(object sender, EventArgs e)
+        {
+            var mkvtoolnix = new MKVToolNix();
+
+            foreach (var item in QueueItems)
+            {
+                List<TimeSpan> chapterTimeSpans = new List<TimeSpan>();
+
+                // Always add the beginning as a chapter
+                chapterTimeSpans.Add(new TimeSpan(0, 0, 0));
+
+                foreach (var frame in item.BlackFrames.Where(bf => bf.Selected))
+                {
+                    var halfDuration = new TimeSpan(frame.Duration.Ticks / 2);
+
+                    chapterTimeSpans.Add(frame.End.Subtract(halfDuration));
+                }
+
+                var chapters = mkvtoolnix.GenerateChapters(chapterTimeSpans);
+
+                mkvtoolnix.InjectChapters(item.FileName, chapters);
+            }
+        }
     }
 }
