@@ -190,8 +190,7 @@
             // StatusBarLabel
             // 
             this.StatusBarLabel.Name = "StatusBarLabel";
-            this.StatusBarLabel.Size = new System.Drawing.Size(84, 17);
-            this.StatusBarLabel.Text = "StatusBarLabel";
+            this.StatusBarLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // ContainerPanel
             // 

@@ -227,6 +227,8 @@ namespace BananaSplit
 
         private void ProcessQueueButton_Click(object sender, EventArgs e)
         {
+            ProcessQueueButton.Enabled = false;
+
             var mkvtoolnix = new MKVToolNix();
 
             foreach (var item in QueueItems)
@@ -247,6 +249,10 @@ namespace BananaSplit
 
                 mkvtoolnix.InjectChapters(item.FileName, chapters);
             }
+
+            MessageBox.Show("Done!");
+
+            ProcessQueueButton.Enabled = true;
         }
     }
 }
