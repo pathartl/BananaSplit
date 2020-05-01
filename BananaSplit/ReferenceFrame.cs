@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BananaSplit
 {
@@ -10,6 +6,5 @@ namespace BananaSplit
     {
         public DateTime ExtractedOn { get; set; }
         public byte[] Data { get; set; }
-        TimeSpan Position { get; set; }
     }
 }
