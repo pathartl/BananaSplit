@@ -229,6 +229,7 @@ namespace BananaSplit
         {
             ProcessQueueButton.Enabled = false;
 
+            var ffmpeg = new FFMPEG();
             var mkvtoolnix = new MKVToolNix();
 
             foreach (var item in QueueItems)
@@ -243,6 +244,13 @@ namespace BananaSplit
                     var halfDuration = new TimeSpan(frame.Duration.Ticks / 2);
 
                     chapterTimeSpans.Add(frame.End.Subtract(halfDuration));
+                }
+
+                if (!ffmpeg.IsMatroska(item.FileName))
+                {
+                    var matroskaPath = mkvtoolnix.RemuxToMatroska(item.FileName);
+
+                    item.FileName = matroskaPath;
                 }
 
                 var chapters = mkvtoolnix.GenerateChapters(chapterTimeSpans);

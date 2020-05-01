@@ -23,6 +23,21 @@ namespace BananaSplit
             Process.StartInfo.CreateNoWindow = true;
         }
 
+		public string RemuxToMatroska(string filepath)
+		{
+			var basename = Path.GetFileNameWithoutExtension(filepath);
+			var path = Path.GetDirectoryName(filepath);
+			var extensionlessPath = Path.Combine(path, basename);
+
+			Process.StartInfo.FileName = "mkvmerge.exe";
+			Process.StartInfo.Arguments = $"-o \"{extensionlessPath}.mkv\" \"{filepath}\"";
+
+			Process.Start();
+			Process.WaitForExit();
+
+			return extensionlessPath + ".mkv";
+		}
+
 		public void InjectChapters(string filepath, Chapters chapters)
 		{
 			var temporaryXmlFile = Path.GetTempFileName();
