@@ -12,6 +12,7 @@ namespace BananaSplit
     public partial class MainForm : Form
     {
         private SettingsForm SettingsForm;
+
         private List<QueueItem> QueueItems { get; set; }
         private Thread ScanningThread;
 
@@ -46,6 +47,8 @@ namespace BananaSplit
             AddFilesToQueueMenuItem.Click += AddFilesToQueueDialog;
             AddFolderToQueueMenuItem.Click += AddFolderToQueueDialog;
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
+
+            SettingsForm = new SettingsForm();
         }
 
         private void AddFilesToQueueDialog(object sender, EventArgs e)
@@ -116,11 +119,13 @@ namespace BananaSplit
                 SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
-                item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName);
+                item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName, SettingsForm.Settings.BlackFrameDuration, SettingsForm.Settings.BlackFrameThreshold);
 
                 foreach (var frame in item.BlackFrames)
                 {
-                    var referenceFramePosition = frame.End.Add(new TimeSpan(0, 0, 2));
+                    long offset = (long)(SettingsForm.Settings.ReferenceFrameOffset * TimeSpan.TicksPerSecond);
+                    TimeSpan referenceFramePosition = frame.End.Add(new TimeSpan(offset));
+
                     SetStatusBarLabelValue($"Generating frame at {referenceFramePosition}");
                     frame.ReferenceFrame = new ReferenceFrame();
                     frame.ReferenceFrame.Data = ffmpeg.ExtractFrame(item.FileName, referenceFramePosition);
@@ -203,7 +208,6 @@ namespace BananaSplit
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SettingsForm = new SettingsForm();
             SettingsForm.Show();
         }
 

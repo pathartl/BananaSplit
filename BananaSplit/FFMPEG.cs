@@ -55,7 +55,7 @@ namespace BananaSplit
             }
         }
 
-        public ICollection<BlackFrame> DetectBlackFrames(string filePath)
+        public ICollection<BlackFrame> DetectBlackFrames(string filePath, double blackFrameDuration, double blackFrameThreshold)
         {
             var frames = new List<BlackFrame>();
 
