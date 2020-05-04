@@ -70,7 +70,7 @@ namespace BananaSplit
 
             Process.WaitForExit();
 
-            string pattern = @"(?:blackdetect.+)(?:black_start:)(?<start>\d+(?:.\d+)) (?:black_end:)(?<end>\d+(?:.\d+)) (?:black_duration:)(?<duration>\d+(?:.\d+))";
+            string pattern = @"(?:blackdetect.+)(?:black_start:)(?<start>\d+(?:.\d+)*) (?:black_end:)(?<end>\d+(?:.\d+)*) (?:black_duration:)(?<duration>\d+(?:.\d+)*)";
 
             Regex regex = new Regex(pattern, RegexOptions.Multiline);
 
