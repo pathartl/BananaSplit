@@ -111,7 +111,7 @@ namespace BananaSplit
 
             var i = 0;
 
-            foreach (var item in QueueItems)
+            foreach (var item in QueueItems.Where(qi => !qi.Scanned))
             {
                 i++;
 
