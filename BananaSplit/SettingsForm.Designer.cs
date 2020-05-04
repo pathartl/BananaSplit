@@ -30,7 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
+            this.FFMPEGArgumentsLegend = new System.Windows.Forms.Label();
             this.FFMPEGArgumentsInput = new System.Windows.Forms.TextBox();
             this.ReferenceFrameOffsetLabel = new System.Windows.Forms.Label();
             this.ReferenceFrameOffsetInput = new System.Windows.Forms.NumericUpDown();
@@ -62,7 +62,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.FFMPEGArgumentsLegend);
             this.tabPage1.Controls.Add(this.FFMPEGArgumentsInput);
             this.tabPage1.Controls.Add(this.ReferenceFrameOffsetLabel);
             this.tabPage1.Controls.Add(this.ReferenceFrameOffsetInput);
@@ -83,14 +83,14 @@
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // FFMPEGArgumentsLegend
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(381, 170);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 60);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Legend:\r\n{source}\r\n{destination}\r\n{timespan}";
+            this.FFMPEGArgumentsLegend.AutoSize = true;
+            this.FFMPEGArgumentsLegend.Location = new System.Drawing.Point(381, 170);
+            this.FFMPEGArgumentsLegend.Name = "FFMPEGArgumentsLegend";
+            this.FFMPEGArgumentsLegend.Size = new System.Drawing.Size(74, 75);
+            this.FFMPEGArgumentsLegend.TabIndex = 11;
+            this.FFMPEGArgumentsLegend.Text = "Legend:\r\n{source}\r\n{destination}\r\n{start}\r\n{end}\r\n{duration}";
             // 
             // FFMPEGArgumentsInput
             // 
@@ -242,7 +242,7 @@
         private System.Windows.Forms.NumericUpDown BlackFrameThresholdInput;
         private System.Windows.Forms.Label ProcessTypeLabel;
         private System.Windows.Forms.ComboBox ProcessTypeComboBox;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label FFMPEGArgumentsLegend;
         private System.Windows.Forms.TextBox FFMPEGArgumentsInput;
         private System.Windows.Forms.Label ReferenceFrameOffsetLabel;
         private System.Windows.Forms.NumericUpDown ReferenceFrameOffsetInput;
