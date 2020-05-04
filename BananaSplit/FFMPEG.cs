@@ -61,7 +61,7 @@ namespace BananaSplit
             var frames = new List<BlackFrame>();
 
             Process.StartInfo.RedirectStandardError = true;
-            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d=0.04:pix_th=.01 -f rawvideo -y /NUL";
+            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pix_th={blackFrameThreshold} -f rawvideo -y /NUL";
 
             Process.Start();
 
