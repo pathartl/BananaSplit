@@ -36,6 +36,30 @@ namespace BananaSplit
             return regex.IsMatch(output);
         }
 
+        public TimeSpan GetDuration(string filePath)
+        {
+            TimeSpan duration = new TimeSpan();
+
+            Process.StartInfo.FileName = "ffprobe.exe";
+            Process.StartInfo.Arguments = $"\"{filePath}\"";
+
+            Process.Start();
+
+            var output = Process.StandardError.ReadToEnd();
+
+            string pattern = @"^\s+Duration: (?<duration>\d+(?:.\d+)*)";
+
+            Regex regex = new Regex(pattern, RegexOptions.Multiline);
+
+            if (regex.IsMatch(output))
+            {
+                var durationString = regex.Match(output).Groups["duration"].Value;
+                TimeSpan.TryParse(durationString, out duration);
+            }
+
+            return duration;
+        }
+
         public byte[] ExtractFrame(string filePath, TimeSpan time)
         {
             var timespan = String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
@@ -54,6 +78,26 @@ namespace BananaSplit
                 Process.WaitForExit();
                 return ms.ToArray();
             }
+        }
+
+        public void EncodeSegments(string source, string destination, string arguments, Segment segment)
+        {
+            arguments = arguments.Replace("{source}", source);
+            arguments = arguments.Replace("{destination}", destination);
+            arguments = arguments.Replace("{start}", String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", segment.Start.Hours, segment.Start.Minutes, segment.Start.Seconds, segment.Start.Milliseconds));
+            arguments = arguments.Replace("{end}", String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", segment.End.Hours, segment.End.Minutes, segment.End.Seconds, segment.End.Milliseconds));
+            arguments = arguments.Replace("{duration}", String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", segment.Duration.Hours, segment.Duration.Minutes, segment.Duration.Seconds, segment.Duration.Milliseconds));
+
+            Process.StartInfo.FileName = "ffmpeg.exe";
+            Process.StartInfo.Arguments = arguments;
+            Process.StartInfo.RedirectStandardOutput = false;
+            Process.StartInfo.RedirectStandardError = true;
+
+            Process.Start();
+
+            var error = Process.StandardError.ReadToEnd();
+
+            Process.WaitForExit();
         }
 
         public ICollection<BlackFrame> DetectBlackFrames(string filePath, double blackFrameDuration, double blackFrameThreshold)

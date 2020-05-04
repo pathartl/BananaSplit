@@ -120,6 +120,7 @@ namespace BananaSplit
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
                 item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName, SettingsForm.Settings.BlackFrameDuration, SettingsForm.Settings.BlackFrameThreshold);
+                item.Duration = ffmpeg.GetDuration(item.FileName);
 
                 foreach (var frame in item.BlackFrames)
                 {
@@ -230,6 +231,24 @@ namespace BananaSplit
         {
             ProcessQueueButton.Enabled = false;
 
+            switch (SettingsForm.Settings.ProcessType)
+            {
+                case ProcessingType.MatroskaChapters:
+                    ProcessMatroskaChapters();
+                    break;
+
+                case ProcessingType.SplitAndEncode:
+                    ProcessSplitAndEncode();
+                    break;
+            }
+
+            MessageBox.Show("Done!");
+
+            ProcessQueueButton.Enabled = true;
+        }
+
+        private void ProcessMatroskaChapters()
+        {
             var ffmpeg = new FFMPEG();
             var mkvtoolnix = new MKVToolNix();
 
@@ -258,10 +277,26 @@ namespace BananaSplit
 
                 mkvtoolnix.InjectChapters(item.FileName, chapters);
             }
+        }
 
-            MessageBox.Show("Done!");
+        private void ProcessSplitAndEncode()
+        {
+            var ffmpeg = new FFMPEG();
 
-            ProcessQueueButton.Enabled = true;
+            foreach (var item in QueueItems)
+            {
+                var segments = item.GetSegments();
+                var index = 1;
+
+                foreach (var segment in segments)
+                {
+                    var newName = Path.Combine(Path.GetDirectoryName(item.FileName), Path.GetFileNameWithoutExtension(item.FileName) + "-" + index + ".mkv");
+
+                    ffmpeg.EncodeSegments(item.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment);
+
+                    index++;
+                }
+            }
         }
     }
 }
