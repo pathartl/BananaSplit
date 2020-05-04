@@ -40,6 +40,7 @@ namespace BananaSplit
         {
             var timespan = String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
 
+            Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.Arguments = $"-ss {timespan} -i \"{filePath}\" -vframes 1 -c:v png -f image2pipe -";
             Process.StartInfo.RedirectStandardOutput = true;
             Process.StartInfo.RedirectStandardError = false;
