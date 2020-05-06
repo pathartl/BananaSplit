@@ -56,6 +56,8 @@ namespace BananaSplit
             QueueList.MouseUp += OpenQueueItemContextMenu;
             QueueItemContextMenuProcess.Click += ProcessQueueItem;
             QueueItemContextMenuRemove.Click += RemoveQueueItem;
+            QueueListContextMenuProcess.Click += ProcessQueue;
+            QueueListContextMenuRemove.Click += RemoveQueueList;
 
             // Other
             ProcessQueueButton.Click += ProcessQueue;
@@ -74,10 +76,14 @@ namespace BananaSplit
 
         private void OpenQueueItemContextMenu(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && QueueList.FocusedItem != null)
+            if (e.Button == MouseButtons.Right && QueueList.FocusedItem != null && QueueList.FocusedItem.Bounds.Contains(e.Location))
             {
                 QueueItemContextMenu.Tag = QueueList.FocusedItem.Tag;
                 QueueItemContextMenu.Show(Cursor.Position);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                QueueListContextMenu.Show(Cursor.Position);
             }
         }
 
@@ -262,6 +268,16 @@ namespace BananaSplit
 
             QueueList.Items.RemoveByKey(queueItem.Id.ToString());
             QueueItems.Remove(queueItem);
+        }
+
+        private void RemoveQueueList(object sender, EventArgs e)
+        {
+            foreach (var queueItem in QueueItems)
+            {
+                QueueList.Items.RemoveByKey(queueItem.Id.ToString());
+            }
+
+            QueueItems.Clear();
         }
 
         private void ProcessQueue(object sender, EventArgs e)

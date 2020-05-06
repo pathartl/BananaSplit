@@ -51,6 +51,9 @@
             this.QueueItemContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.QueueItemContextMenuProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.QueueItemContextMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.QueueListContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.QueueListContextMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.QueueListContextMenuProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
@@ -61,6 +64,7 @@
             this.MainPanel.SuspendLayout();
             this.ActionBarPanel.SuspendLayout();
             this.QueueItemContextMenu.SuspendLayout();
+            this.QueueListContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // Menu
@@ -265,6 +269,26 @@
             this.QueueItemContextMenuRemove.Size = new System.Drawing.Size(117, 22);
             this.QueueItemContextMenuRemove.Text = "Remove";
             // 
+            // QueueListContextMenu
+            // 
+            this.QueueListContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.QueueListContextMenuRemove,
+            this.QueueListContextMenuProcess});
+            this.QueueListContextMenu.Name = "QueueListContextMenu";
+            this.QueueListContextMenu.Size = new System.Drawing.Size(153, 48);
+            // 
+            // QueueListContextMenuRemove
+            // 
+            this.QueueListContextMenuRemove.Name = "QueueListContextMenuRemove";
+            this.QueueListContextMenuRemove.Size = new System.Drawing.Size(152, 22);
+            this.QueueListContextMenuRemove.Text = "Remove All";
+            // 
+            // QueueListContextMenuProcess
+            // 
+            this.QueueListContextMenuProcess.Name = "QueueListContextMenuProcess";
+            this.QueueListContextMenuProcess.Size = new System.Drawing.Size(152, 22);
+            this.QueueListContextMenuProcess.Text = "Process Queue";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -291,6 +315,7 @@
             this.ActionBarPanel.ResumeLayout(false);
             this.ActionBarPanel.PerformLayout();
             this.QueueItemContextMenu.ResumeLayout(false);
+            this.QueueListContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -320,6 +345,9 @@
         private System.Windows.Forms.ContextMenuStrip QueueItemContextMenu;
         private System.Windows.Forms.ToolStripMenuItem QueueItemContextMenuRemove;
         private System.Windows.Forms.ToolStripMenuItem QueueItemContextMenuProcess;
+        private System.Windows.Forms.ContextMenuStrip QueueListContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem QueueListContextMenuRemove;
+        private System.Windows.Forms.ToolStripMenuItem QueueListContextMenuProcess;
     }
 }
 
