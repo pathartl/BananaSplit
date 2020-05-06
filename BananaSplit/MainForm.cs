@@ -59,11 +59,17 @@ namespace BananaSplit
 
             // Other
             ProcessQueueButton.Click += ProcessQueue;
+            QueueList.Resize += AutoSizeQueueList;
 
             SettingsForm = new SettingsForm();
 
             FFMPEG = new FFMPEG();
             MKVToolNix = new MKVToolNix();
+        }
+
+        private void AutoSizeQueueList(object sender, EventArgs e)
+        {
+            QueueList.Columns[0].Width = QueueList.Width - 4;
         }
 
         private void OpenQueueItemContextMenu(object sender, MouseEventArgs e)
