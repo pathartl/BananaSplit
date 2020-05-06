@@ -32,13 +32,13 @@ namespace BananaSplit
                 var start = new Segment()
                 {
                     Start = new TimeSpan(0, 0, 0),
-                    End = selectedFrames.First().GetMiddle()
+                    End = selectedFrames.First().Marker
                 };
 
                 // The last segment starts at the end of the last black frame to the end of the video
                 var end = new Segment()
                 {
-                    Start = selectedFrames.Last().GetMiddle(),
+                    Start = selectedFrames.Last().Marker,
                     End = Duration
                 };
 
@@ -51,8 +51,8 @@ namespace BananaSplit
                 {
                     additionalSegments.Add(new Segment()
                     {
-                        Start = selectedFrames[index].GetMiddle(),
-                        End = selectedFrames[index + 1].GetMiddle()
+                        Start = selectedFrames[index].Marker,
+                        End = selectedFrames[index + 1].Marker
                     });
 
                     index++;

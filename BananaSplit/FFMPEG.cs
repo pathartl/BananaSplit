@@ -163,16 +163,18 @@ namespace BananaSplit
 
             Process.WaitForExit();
 
-            string pattern = @"(?:Parsed_blackframe.+t:(?<time>\d+(?:\.\d+)*)|^frame.+$)";
+            string pattern = @"t:(?'time'\d+(?:\.\d+)*) type:\w last_keyframe:(?'group'\d+)";
 
             Regex regex = new Regex(pattern, RegexOptions.Multiline);
 
             var matches = regex.Matches(output);
             var blackFrames = new List<TimeSpan>();
 
-            foreach (Match match in matches)
+            var matchGroups = matches.GroupBy(m => m.Groups["group"].Value);
+
+            foreach (var group in matchGroups)
             {
-                try
+                foreach (var match in group)
                 {
                     decimal time;
 
@@ -180,19 +182,18 @@ namespace BananaSplit
                     {
                         blackFrames.Add(TimeSpan.FromSeconds((double)time));
                     }
-                    else
-                    {
-                        frames.Add(new BlackFrame()
-                        {
-                            Start = blackFrames.First(),
-                            End = blackFrames.Last(),
-                            Duration = blackFrames.Last().Subtract(blackFrames.First())
-                        });
-
-                        blackFrames = new List<TimeSpan>();
-                    }
                 }
-                catch { }
+
+                var frame = new BlackFrame();
+
+                frame.Start = blackFrames.First();
+                frame.End = blackFrames.Last();
+                frame.Duration = blackFrames.Last().Subtract(blackFrames.First());
+                frame.Marker = frame.GetMiddle();
+
+                frames.Add(frame);
+
+                blackFrames = new List<TimeSpan>();
             }
 
             return frames;
