@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace BananaSplit
@@ -42,6 +43,8 @@ namespace BananaSplit
 
             Process.StartInfo.FileName = "ffprobe.exe";
             Process.StartInfo.Arguments = $"\"{filePath}\"";
+            Process.StartInfo.RedirectStandardOutput = false;
+            Process.StartInfo.RedirectStandardError = true;
 
             Process.Start();
 
@@ -100,12 +103,13 @@ namespace BananaSplit
             Process.WaitForExit();
         }
 
-        public ICollection<BlackFrame> DetectBlackFrames(string filePath, double blackFrameDuration, double blackFrameThreshold)
+        public ICollection<BlackFrame> DetectBlackFrameIntervals(string filePath, double blackFrameDuration, double blackFrameThreshold)
         {
             var frames = new List<BlackFrame>();
 
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pix_th={blackFrameThreshold} -f rawvideo -y /NUL";
+            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
 
             Process.Start();
 
@@ -138,6 +142,55 @@ namespace BananaSplit
                     frame.Duration = TimeSpan.FromSeconds((double)duration);
 
                     frames.Add(frame);
+                }
+                catch { }
+            }
+
+            return frames;
+        }
+
+        public ICollection<BlackFrame> DetectBlackFrames(string filePath)
+        {
+            var frames = new List<BlackFrame>();
+
+            Process.StartInfo.RedirectStandardError = true;
+            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
+
+            Process.Start();
+
+            // ffmpeg uses stderr for some reason
+            var output = Process.StandardError.ReadToEnd();
+
+            Process.WaitForExit();
+
+            string pattern = @"(?:Parsed_blackframe.+t:(?<time>\d+(?:\.\d+)*)|^frame.+$)";
+
+            Regex regex = new Regex(pattern, RegexOptions.Multiline);
+
+            var matches = regex.Matches(output);
+            var blackFrames = new List<TimeSpan>();
+
+            foreach (Match match in matches)
+            {
+                try
+                {
+                    decimal time;
+
+                    if (Decimal.TryParse(match.Groups["time"].Value, out time))
+                    {
+                        blackFrames.Add(TimeSpan.FromSeconds((double)time));
+                    }
+                    else
+                    {
+                        frames.Add(new BlackFrame()
+                        {
+                            Start = blackFrames.First(),
+                            End = blackFrames.Last(),
+                            Duration = blackFrames.Last().Subtract(blackFrames.First())
+                        });
+
+                        blackFrames = new List<TimeSpan>();
+                    }
                 }
                 catch { }
             }

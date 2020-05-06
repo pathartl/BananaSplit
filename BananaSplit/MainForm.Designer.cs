@@ -48,6 +48,9 @@
             this.MainPanel = new System.Windows.Forms.Panel();
             this.ActionBarPanel = new System.Windows.Forms.Panel();
             this.ProcessQueueButton = new System.Windows.Forms.Button();
+            this.QueueItemContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.QueueItemContextMenuProcess = new System.Windows.Forms.ToolStripMenuItem();
+            this.QueueItemContextMenuRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.Menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FileBrowserSplitContainer)).BeginInit();
             this.FileBrowserSplitContainer.Panel1.SuspendLayout();
@@ -57,6 +60,7 @@
             this.ContainerPanel.SuspendLayout();
             this.MainPanel.SuspendLayout();
             this.ActionBarPanel.SuspendLayout();
+            this.QueueItemContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // Menu
@@ -106,7 +110,6 @@
             this.SettingsMenuItem.Name = "SettingsMenuItem";
             this.SettingsMenuItem.Size = new System.Drawing.Size(116, 22);
             this.SettingsMenuItem.Text = "Settings";
-            this.SettingsMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // AboutMenuItem
             // 
@@ -241,7 +244,26 @@
             this.ProcessQueueButton.TabIndex = 0;
             this.ProcessQueueButton.Text = "Process Queue";
             this.ProcessQueueButton.UseVisualStyleBackColor = true;
-            this.ProcessQueueButton.Click += new System.EventHandler(this.ProcessQueueButton_Click);
+            // 
+            // QueueItemContextMenu
+            // 
+            this.QueueItemContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.QueueItemContextMenuProcess,
+            this.QueueItemContextMenuRemove});
+            this.QueueItemContextMenu.Name = "QueueItemContextMenu";
+            this.QueueItemContextMenu.Size = new System.Drawing.Size(118, 48);
+            // 
+            // QueueItemContextMenuProcess
+            // 
+            this.QueueItemContextMenuProcess.Name = "QueueItemContextMenuProcess";
+            this.QueueItemContextMenuProcess.Size = new System.Drawing.Size(117, 22);
+            this.QueueItemContextMenuProcess.Text = "Process";
+            // 
+            // QueueItemContextMenuRemove
+            // 
+            this.QueueItemContextMenuRemove.Name = "QueueItemContextMenuRemove";
+            this.QueueItemContextMenuRemove.Size = new System.Drawing.Size(117, 22);
+            this.QueueItemContextMenuRemove.Text = "Remove";
             // 
             // MainForm
             // 
@@ -268,6 +290,7 @@
             this.MainPanel.ResumeLayout(false);
             this.ActionBarPanel.ResumeLayout(false);
             this.ActionBarPanel.PerformLayout();
+            this.QueueItemContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,6 +317,9 @@
         private System.Windows.Forms.Panel ActionBarPanel;
         private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.Button ProcessQueueButton;
+        private System.Windows.Forms.ContextMenuStrip QueueItemContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem QueueItemContextMenuRemove;
+        private System.Windows.Forms.ToolStripMenuItem QueueItemContextMenuProcess;
     }
 }
 

@@ -15,6 +15,8 @@ namespace BananaSplit
 
         private List<QueueItem> QueueItems { get; set; }
         private Thread ScanningThread;
+        private FFMPEG FFMPEG;
+        private MKVToolNix MKVToolNix;
 
         private string[] SupportedExtensions =
         {
@@ -44,11 +46,33 @@ namespace BananaSplit
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            // Menu Items
             AddFilesToQueueMenuItem.Click += AddFilesToQueueDialog;
             AddFolderToQueueMenuItem.Click += AddFolderToQueueDialog;
+            SettingsMenuItem.Click += OpenSettingsForm;
+
+            // Queue List
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
+            QueueList.MouseUp += OpenQueueItemContextMenu;
+            QueueItemContextMenuProcess.Click += ProcessQueueItem;
+            QueueItemContextMenuRemove.Click += RemoveQueueItem;
+
+            // Other
+            ProcessQueueButton.Click += ProcessQueue;
 
             SettingsForm = new SettingsForm();
+
+            FFMPEG = new FFMPEG();
+            MKVToolNix = new MKVToolNix();
+        }
+
+        private void OpenQueueItemContextMenu(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && QueueList.FocusedItem != null)
+            {
+                QueueItemContextMenu.Tag = QueueList.FocusedItem.Tag;
+                QueueItemContextMenu.Show(Cursor.Position);
+            }
         }
 
         private void AddFilesToQueueDialog(object sender, EventArgs e)
@@ -105,8 +129,6 @@ namespace BananaSplit
 
         private void ScanQueueItems()
         {
-            FFMPEG ffmpeg = new FFMPEG();
-
             SetStatusBarProgressBarValue(0, QueueItems.Count);
 
             var i = 0;
@@ -119,8 +141,8 @@ namespace BananaSplit
                 SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
-                item.BlackFrames = ffmpeg.DetectBlackFrames(item.FileName, SettingsForm.Settings.BlackFrameDuration, SettingsForm.Settings.BlackFrameThreshold);
-                item.Duration = ffmpeg.GetDuration(item.FileName);
+                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName);
+                item.Duration = FFMPEG.GetDuration(item.FileName);
 
                 foreach (var frame in item.BlackFrames)
                 {
@@ -129,7 +151,7 @@ namespace BananaSplit
 
                     SetStatusBarLabelValue($"Generating frame at {referenceFramePosition}");
                     frame.ReferenceFrame = new ReferenceFrame();
-                    frame.ReferenceFrame.Data = ffmpeg.ExtractFrame(item.FileName, referenceFramePosition);
+                    frame.ReferenceFrame.Data = FFMPEG.ExtractFrame(item.FileName, referenceFramePosition);
                 }
 
                 AddItemToQueue(item);
@@ -170,6 +192,7 @@ namespace BananaSplit
                         {
                             Text = Path.GetFileName(item.FileName),
                             ToolTipText = item.FileName,
+                            Name = item.Id.ToString(),
                             Tag = item
                         });
                     }
@@ -208,7 +231,7 @@ namespace BananaSplit
             }
         }
 
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenSettingsForm(object sender, EventArgs e)
         {
             SettingsForm.Show();
         }
@@ -227,18 +250,32 @@ namespace BananaSplit
             }
         }
 
-        private void ProcessQueueButton_Click(object sender, EventArgs e)
+        private void RemoveQueueItem(object sender, EventArgs e)
+        {
+            QueueItem queueItem = (QueueItem)QueueItemContextMenu.Tag;
+
+            QueueList.Items.RemoveByKey(queueItem.Id.ToString());
+            QueueItems.Remove(queueItem);
+        }
+
+        private void ProcessQueue(object sender, EventArgs e)
         {
             ProcessQueueButton.Enabled = false;
 
             switch (SettingsForm.Settings.ProcessType)
             {
                 case ProcessingType.MatroskaChapters:
-                    ProcessMatroskaChapters();
+                    foreach (var queueItem in QueueItems)
+                    {
+                        ProcessMatroskaChapters(queueItem);
+                    }
                     break;
 
                 case ProcessingType.SplitAndEncode:
-                    ProcessSplitAndEncode();
+                    foreach (var queueItem in QueueItems)
+                    {
+                        ProcessSplitAndEncode(queueItem);
+                    }
                     break;
             }
 
@@ -247,55 +284,66 @@ namespace BananaSplit
             ProcessQueueButton.Enabled = true;
         }
 
-        private void ProcessMatroskaChapters()
+        private void ProcessQueueItem(object sender, EventArgs e)
         {
-            var ffmpeg = new FFMPEG();
-            var mkvtoolnix = new MKVToolNix();
+            QueueItem queueItem = (QueueItem)QueueItemContextMenu.Tag;
 
-            foreach (var item in QueueItems)
+            ProcessQueueButton.Enabled = false;
+
+            switch (SettingsForm.Settings.ProcessType)
             {
-                List<TimeSpan> chapterTimeSpans = new List<TimeSpan>();
+                case ProcessingType.MatroskaChapters:
+                    ProcessMatroskaChapters(queueItem);
+                    break;
 
-                // Always add the beginning as a chapter
-                chapterTimeSpans.Add(new TimeSpan(0, 0, 0));
-
-                foreach (var frame in item.BlackFrames.Where(bf => bf.Selected))
-                {
-                    var halfDuration = new TimeSpan(frame.Duration.Ticks / 2);
-
-                    chapterTimeSpans.Add(frame.End.Subtract(halfDuration));
-                }
-
-                if (!ffmpeg.IsMatroska(item.FileName))
-                {
-                    var matroskaPath = mkvtoolnix.RemuxToMatroska(item.FileName);
-
-                    item.FileName = matroskaPath;
-                }
-
-                var chapters = mkvtoolnix.GenerateChapters(chapterTimeSpans);
-
-                mkvtoolnix.InjectChapters(item.FileName, chapters);
+                case ProcessingType.SplitAndEncode:
+                    ProcessSplitAndEncode(queueItem);
+                    break;
             }
+
+            MessageBox.Show("Done!");
+
+            ProcessQueueButton.Enabled = true;
         }
 
-        private void ProcessSplitAndEncode()
+        private void ProcessMatroskaChapters(QueueItem queueItem)
         {
-            var ffmpeg = new FFMPEG();
+            List<TimeSpan> chapterTimeSpans = new List<TimeSpan>();
 
-            foreach (var item in QueueItems)
+            // Always add the beginning as a chapter
+            chapterTimeSpans.Add(new TimeSpan(0, 0, 0));
+
+            foreach (var frame in queueItem.BlackFrames.Where(bf => bf.Selected))
             {
-                var segments = item.GetSegments();
-                var index = 1;
+                var halfDuration = new TimeSpan(frame.Duration.Ticks / 2);
 
-                foreach (var segment in segments)
-                {
-                    var newName = Path.Combine(Path.GetDirectoryName(item.FileName), Path.GetFileNameWithoutExtension(item.FileName) + "-" + index + ".mkv");
+                chapterTimeSpans.Add(frame.End.Subtract(halfDuration));
+            }
 
-                    ffmpeg.EncodeSegments(item.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment);
+            if (!FFMPEG.IsMatroska(queueItem.FileName))
+            {
+                var matroskaPath = MKVToolNix.RemuxToMatroska(queueItem.FileName);
 
-                    index++;
-                }
+                queueItem.FileName = matroskaPath;
+            }
+
+            var chapters = MKVToolNix.GenerateChapters(chapterTimeSpans);
+
+            MKVToolNix.InjectChapters(queueItem.FileName, chapters);
+        }
+
+        private void ProcessSplitAndEncode(QueueItem queueItem)
+        {
+            var segments = queueItem.GetSegments();
+            var index = 1;
+
+            foreach (var segment in segments)
+            {
+                var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
+
+                FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment);
+
+                index++;
             }
         }
     }
