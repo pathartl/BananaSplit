@@ -30,8 +30,8 @@ namespace BananaSplit
         {
             BlackFrameDuration = 0.04;
             BlackFrameThreshold = 0.01;
-            FFMPEGArguments = "";
-            ProcessType = ProcessingType.MatroskaChapters;
+            FFMPEGArguments = "-i \"{source}\" -ss {start} -t {duration} -c:v libx264 -crf 18 -preset slow -c:a copy -map 0 \"{destination}\"";
+            ProcessType = ProcessingType.SplitAndEncode;
             DeleteOriginal = false;
             ReferenceFrameOffset = 1;
         }
