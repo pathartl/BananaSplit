@@ -5,6 +5,14 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ffmpeg.exe" />
+    <None Remove="ffprobe.exe" />
+    <None Remove="mkvextract.exe" />
+    <None Remove="mkvinfo.exe" />
+    <None Remove="mkvmerge.exe" />
+    <None Remove="mkvpropedit.exe" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
   </ItemGroup>
@@ -16,15 +24,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="ffmpeg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ffprobe.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="mkvmerge.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
