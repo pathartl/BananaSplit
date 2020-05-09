@@ -1,4 +1,5 @@
 ﻿using BananaSplit.Extensions;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,6 +16,7 @@ namespace BananaSplit
 
         private List<QueueItem> QueueItems { get; set; }
         private Thread ScanningThread;
+        private Thread ProcessingThread;
         private FFMPEG FFMPEG;
         private MKVToolNix MKVToolNix;
 
@@ -170,6 +172,7 @@ namespace BananaSplit
             }
 
             SetStatusBarLabelValue("Done!");
+            ClearStatusBarProgressBarValue();
         }
 
         private void SetStatusBarProgressBarValue(int value, int maximum)
@@ -179,6 +182,22 @@ namespace BananaSplit
                     delegate () {
                         StatusBarProgressBar.Value = value;
                         StatusBarProgressBar.Maximum = maximum;
+                        TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
+                        TaskbarManager.Instance.SetProgressValue(value, maximum);
+                    }
+                )
+            );
+        }
+
+        private void ClearStatusBarProgressBarValue()
+        {
+            StatusBar.Invoke(
+                new MethodInvoker(
+                    delegate () {
+                        StatusBarProgressBar.Value = 0;
+                        StatusBarProgressBar.Maximum = 1;
+                        TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+                        TaskbarManager.Instance.SetProgressValue(0, 1);
                     }
                 )
             );
@@ -190,6 +209,44 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate () {
                         StatusBarLabel.Text = value;
+                    }
+                )
+            );
+        }
+
+        private void LockControls()
+        {
+            Invoke(
+                new MethodInvoker(
+                    delegate ()
+                    {
+                        ProcessQueueButton.Enabled = false;
+                        QueueListContextMenuProcess.Enabled = false;
+                        QueueItemContextMenuProcess.Enabled = false;
+                        QueueListContextMenuRemove.Enabled = false;
+                        QueueItemContextMenuRemove.Enabled = false;
+                        AddFilesToQueueMenuItem.Enabled = false;
+                        AddFolderToQueueMenuItem.Enabled = false;
+                        Cursor.Current = Cursors.WaitCursor;
+                    }
+                )
+            );
+        }
+
+        private void UnlockControls()
+        {
+            Invoke(
+                new MethodInvoker(
+                    delegate ()
+                    {
+                        ProcessQueueButton.Enabled = true;
+                        QueueListContextMenuProcess.Enabled = true;
+                        QueueItemContextMenuProcess.Enabled = true;
+                        QueueListContextMenuRemove.Enabled = true;
+                        QueueItemContextMenuRemove.Enabled = true;
+                        AddFilesToQueueMenuItem.Enabled = true;
+                        AddFolderToQueueMenuItem.Enabled = true;
+                        Cursor.Current = Cursors.Default;
                     }
                 )
             );
@@ -282,50 +339,84 @@ namespace BananaSplit
 
         private void ProcessQueue(object sender, EventArgs e)
         {
-            ProcessQueueButton.Enabled = false;
-
-            switch (SettingsForm.Settings.ProcessType)
+            ProcessingThread = new Thread(() =>
             {
-                case ProcessingType.MatroskaChapters:
-                    foreach (var queueItem in QueueItems)
-                    {
-                        ProcessMatroskaChapters(queueItem);
-                    }
-                    break;
+                LockControls();
 
-                case ProcessingType.SplitAndEncode:
-                    foreach (var queueItem in QueueItems)
-                    {
-                        ProcessSplitAndEncode(queueItem);
-                    }
-                    break;
-            }
+                SetStatusBarProgressBarValue(0, QueueItems.Count);
 
-            MessageBox.Show("Done!");
+                var i = 0;
 
-            ProcessQueueButton.Enabled = true;
+                switch (SettingsForm.Settings.ProcessType)
+                {
+                    case ProcessingType.MatroskaChapters:
+                        foreach (var queueItem in QueueItems)
+                        {
+                            i++;
+
+                            SetStatusBarProgressBarValue(i, QueueItems.Count);
+                            SetStatusBarLabelValue($"Adding chapters for {Path.GetFileName(queueItem.FileName)}");
+
+                            ProcessMatroskaChapters(queueItem);
+                        }
+
+                        SetStatusBarLabelValue("Done adding chapters!");
+                        break;
+
+                    case ProcessingType.SplitAndEncode:
+                        foreach (var queueItem in QueueItems)
+                        {
+                            i++;
+
+                            SetStatusBarProgressBarValue(i, QueueItems.Count);
+                            SetStatusBarLabelValue($"Encoding for {Path.GetFileName(queueItem.FileName)}");
+
+                            ProcessSplitAndEncode(queueItem);
+                        }
+
+                        SetStatusBarLabelValue("Done encoding!");
+                        break;
+                }
+
+                UnlockControls();
+                
+                ClearStatusBarProgressBarValue();
+            });
+
+            ProcessingThread.Start();
         }
 
         private void ProcessQueueItem(object sender, EventArgs e)
         {
-            QueueItem queueItem = (QueueItem)QueueItemContextMenu.Tag;
-
-            ProcessQueueButton.Enabled = false;
-
-            switch (SettingsForm.Settings.ProcessType)
+            ProcessingThread = new Thread(() =>
             {
-                case ProcessingType.MatroskaChapters:
-                    ProcessMatroskaChapters(queueItem);
-                    break;
+                QueueItem queueItem = (QueueItem)QueueItemContextMenu.Tag;
 
-                case ProcessingType.SplitAndEncode:
-                    ProcessSplitAndEncode(queueItem);
-                    break;
-            }
+                LockControls();
 
-            MessageBox.Show("Done!");
+                SetStatusBarProgressBarValue(1, 1);
 
-            ProcessQueueButton.Enabled = true;
+                switch (SettingsForm.Settings.ProcessType)
+                {
+                    case ProcessingType.MatroskaChapters:
+                        SetStatusBarLabelValue($"Adding chapters for {Path.GetFileName(queueItem.FileName)}");
+                        ProcessMatroskaChapters(queueItem);
+                        SetStatusBarLabelValue("Done adding chapters!");
+                        break;
+
+                    case ProcessingType.SplitAndEncode:
+                        SetStatusBarLabelValue($"Encoding for {Path.GetFileName(queueItem.FileName)}");
+                        ProcessSplitAndEncode(queueItem);
+                        SetStatusBarLabelValue("Done encoding!");
+                        break;
+                }
+
+                UnlockControls();
+
+                ClearStatusBarProgressBarValue();
+            });
+
+            ProcessingThread.Start();
         }
 
         private void ProcessMatroskaChapters(QueueItem queueItem)
