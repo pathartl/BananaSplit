@@ -62,5 +62,11 @@ namespace BananaSplit
         {
             BlackFrameDurationInput.Text = Settings.BlackFrameDuration.ToString();
         }
+
+        private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true;
+        }
     }
 }
