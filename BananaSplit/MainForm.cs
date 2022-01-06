@@ -56,6 +56,7 @@ namespace BananaSplit
             // Queue List
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
             QueueList.MouseUp += OpenQueueItemContextMenu;
+            QueueList.KeyDown += QueueListKeyDownHandler;
             QueueItemContextMenuProcess.Click += ProcessQueueItem;
             QueueItemContextMenuRemove.Click += RemoveQueueItem;
             QueueListContextMenuProcess.Click += ProcessQueue;
@@ -457,6 +458,17 @@ namespace BananaSplit
                 FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment);
 
                 index++;
+            }
+        }
+
+        private void QueueListKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                foreach (ListViewItem eachItem in QueueList.SelectedItems)
+                {
+                    QueueList.Items.Remove(eachItem);
+                }
             }
         }
     }
