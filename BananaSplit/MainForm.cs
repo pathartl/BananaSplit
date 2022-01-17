@@ -467,7 +467,10 @@ namespace BananaSplit
             {
                 foreach (ListViewItem eachItem in QueueList.SelectedItems)
                 {
+                    QueueItem queueItem = eachItem.Tag as QueueItem;
+
                     QueueList.Items.Remove(eachItem);
+                    QueueItems.Remove(queueItem);
                 }
             }
         }
