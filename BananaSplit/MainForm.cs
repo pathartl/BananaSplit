@@ -66,6 +66,11 @@ namespace BananaSplit
             ProcessQueueButton.Click += ProcessQueue;
             QueueList.Resize += AutoSizeQueueList;
 
+            // Drag and Drop
+            this.AllowDrop = true;
+            this.DragOver += AddDragOverItemToQueueDialog;
+            this.DragDrop += AddDragDropItemToQueueDialog;
+
             SettingsForm = new SettingsForm();
 
             FFMPEG = new FFMPEG();
@@ -139,6 +144,33 @@ namespace BananaSplit
 
                     ScanningThread.Start();
                 }
+            }
+        }
+
+        private void AddDragOverItemToQueueDialog(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Link;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void AddDragDropItemToQueueDialog(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if(files != null && files.Any())
+            {
+                QueueItems.AddRange(files.Select(fn => new QueueItem(fn)));
+
+                ScanningThread = new Thread(() => {
+                    ScanQueueItems();
+                });
+
+                ScanningThread.Start();
             }
         }
 
