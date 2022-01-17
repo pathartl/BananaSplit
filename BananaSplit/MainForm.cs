@@ -229,6 +229,7 @@ namespace BananaSplit
                         AddFilesToQueueMenuItem.Enabled = false;
                         AddFolderToQueueMenuItem.Enabled = false;
                         Cursor.Current = Cursors.WaitCursor;
+                        Cursor = Cursors.WaitCursor;
                     }
                 )
             );
@@ -248,6 +249,7 @@ namespace BananaSplit
                         AddFilesToQueueMenuItem.Enabled = true;
                         AddFolderToQueueMenuItem.Enabled = true;
                         Cursor.Current = Cursors.Default;
+                        Cursor = Cursors.Default;
                     }
                 )
             );
