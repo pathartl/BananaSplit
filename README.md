@@ -17,9 +17,18 @@ To install BananaSplit, simply extract the zip file to a location of your choosi
  - Black frame duration, threshold, and delete original settings are currently non-functioning
 
 ### Version
-3.0.0
+3.1.0
 
 ### Changelog
+
+#### 3.1.0
+
+- Added support for drag and drop files
+- Added support to delete files with delete key
+- Fixed possible crash
+- Fixed cursor not changing to the right icon
+
+(Thanks to [ricardosabino](https://github.com/ricardosabino) for his [pull request](https://github.com/pathartl/BananaSplit/pull/24)!)
 
 #### 3.0.0
 

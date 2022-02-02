@@ -3,6 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Version>3.1.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="ffmpeg.exe" />
