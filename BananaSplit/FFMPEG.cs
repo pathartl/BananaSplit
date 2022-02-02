@@ -21,14 +21,24 @@ namespace BananaSplit
             Process.StartInfo.CreateNoWindow = true;
         }
 
-        public bool IsMatroska(string filePath)
+        public bool IsMatroska(string filePath, DataReceivedEventHandler outputHandler)
         {
             Process.StartInfo.FileName = "ffprobe.exe";
             Process.StartInfo.Arguments = $"\"{filePath}\"";
 
-            Process.Start();
+            var output = "";
+            DataReceivedEventHandler handler = (s, evt) =>
+            {
+                output += evt.Data + "\n"; outputHandler(s, evt);
+            };
+            Process.ErrorDataReceived += handler;
 
-            var output = Process.StandardError.ReadToEnd();
+            Process.Start();
+            Process.BeginErrorReadLine();
+
+            Process.WaitForExit();
+            Process.ErrorDataReceived -= handler;
+            Process.CancelErrorRead();
 
             string pattern = @"^Input #\d+, matroska";
 
@@ -37,7 +47,7 @@ namespace BananaSplit
             return regex.IsMatch(output);
         }
 
-        public TimeSpan GetDuration(string filePath)
+        public TimeSpan GetDuration(string filePath, DataReceivedEventHandler outputHandler)
         {
             TimeSpan duration = new TimeSpan();
 
@@ -46,9 +56,19 @@ namespace BananaSplit
             Process.StartInfo.RedirectStandardOutput = false;
             Process.StartInfo.RedirectStandardError = true;
 
+            var output = "";
+            DataReceivedEventHandler handler = (s, evt) =>
+            {
+                output += evt.Data + "\n"; outputHandler(s, evt);
+            };
+            Process.ErrorDataReceived += handler;
+            
             Process.Start();
+            Process.BeginErrorReadLine();
 
-            var output = Process.StandardError.ReadToEnd();
+            Process.WaitForExit();
+            Process.ErrorDataReceived -= handler;
+            Process.CancelErrorRead();
 
             string pattern = @"^\s+Duration: (?<duration>\d+(?:.\d+)*)";
 
@@ -63,27 +83,36 @@ namespace BananaSplit
             return duration;
         }
 
-        public byte[] ExtractFrame(string filePath, TimeSpan time)
+        public byte[] ExtractFrame(string filePath, TimeSpan time, DataReceivedEventHandler outputHandler)
         {
             var timespan = String.Format("{0:D2}:{1:D2}:{2:D2}.{3}", time.Hours, time.Minutes, time.Seconds, time.Milliseconds);
 
             Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.Arguments = $"-ss {timespan} -i \"{filePath}\" -vframes 1 -c:v png -f image2pipe -";
             Process.StartInfo.RedirectStandardOutput = true;
-            Process.StartInfo.RedirectStandardError = false;
+            Process.StartInfo.RedirectStandardError = true;
+
+            // ffmpeg uses stderr for some reason
+            DataReceivedEventHandler handler = (s, evt) => outputHandler(s, evt);
+            Process.ErrorDataReceived += handler; 
 
             Process.Start();
+            Process.BeginErrorReadLine();
 
             using (MemoryStream ms = new MemoryStream())
             {
                 Process.StandardOutput.BaseStream.CopyTo(ms);
 
                 Process.WaitForExit();
+                Process.CancelErrorRead();
+                Process.ErrorDataReceived -= handler;
+
                 return ms.ToArray();
             }
         }
 
-        public void EncodeSegments(string source, string destination, string arguments, Segment segment)
+       
+        public void EncodeSegments(string source, string destination, string arguments, Segment segment, DataReceivedEventHandler outputHandler)
         {
             arguments = arguments.Replace("{source}", source);
             arguments = arguments.Replace("{destination}", destination);
@@ -96,27 +125,40 @@ namespace BananaSplit
             Process.StartInfo.RedirectStandardOutput = false;
             Process.StartInfo.RedirectStandardError = true;
 
+            // ffmpeg uses stderr for some reason
+            DataReceivedEventHandler handler = (s, evt) => outputHandler(s, evt);
+            Process.ErrorDataReceived += handler;
             Process.Start();
-
-            var error = Process.StandardError.ReadToEnd();
+            Process.BeginErrorReadLine();
 
             Process.WaitForExit();
+            Process.ErrorDataReceived -= handler;
+            Process.CancelErrorRead();
         }
 
-        public ICollection<BlackFrame> DetectBlackFrameIntervals(string filePath, double blackFrameDuration, double blackFrameThreshold)
+        public ICollection<BlackFrame> DetectBlackFrameIntervals(string filePath, double blackFrameDuration, double blackFrameThreshold, DataReceivedEventHandler outputHandler)
         {
             var frames = new List<BlackFrame>();
 
+            Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pix_th={blackFrameThreshold} -f rawvideo -y /NUL";
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
 
-            Process.Start();
-
             // ffmpeg uses stderr for some reason
-            var output = Process.StandardError.ReadToEnd();
+            var output = "";
+            DataReceivedEventHandler handler = (s, evt) =>
+            {
+                output += evt.Data + "\n"; outputHandler(s, evt);
+            };
+            Process.ErrorDataReceived += handler;
+
+            Process.Start();
+            Process.BeginErrorReadLine();
 
             Process.WaitForExit();
+            Process.ErrorDataReceived -= handler;
+            Process.CancelErrorRead();
 
             string pattern = @"(?:blackdetect.+)(?:black_start:)(?<start>\d+(?:.\d+)*) (?:black_end:)(?<end>\d+(?:.\d+)*) (?:black_duration:)(?<duration>\d+(?:.\d+)*)";
 
@@ -149,19 +191,28 @@ namespace BananaSplit
             return frames;
         }
 
-        public ICollection<BlackFrame> DetectBlackFrames(string filePath)
+        public ICollection<BlackFrame> DetectBlackFrames(string filePath, DataReceivedEventHandler outputHandler)
         {
             var frames = new List<BlackFrame>();
 
+            Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
 
-            Process.Start();
-
             // ffmpeg uses stderr for some reason
-            var output = Process.StandardError.ReadToEnd();
+            var output = "";
+            DataReceivedEventHandler handler = (s, evt) =>
+            {
+                output += evt.Data + "\n"; outputHandler(s, evt);
+            };
+            Process.ErrorDataReceived += handler;
 
+            Process.Start();
+            Process.BeginErrorReadLine();
+            
             Process.WaitForExit();
+            Process.ErrorDataReceived -= handler;
+            Process.CancelErrorRead();
 
             string pattern = @"t:(?'time'\d+(?:\.\d+)*) type:\w last_keyframe:(?'group'\d+)";
 

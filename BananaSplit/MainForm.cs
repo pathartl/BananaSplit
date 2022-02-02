@@ -3,8 +3,10 @@ using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -13,6 +15,7 @@ namespace BananaSplit
     public partial class MainForm : Form
     {
         private SettingsForm SettingsForm;
+        private LogForm LogForm;
 
         private List<QueueItem> QueueItems { get; set; }
         private Thread ScanningThread;
@@ -56,6 +59,7 @@ namespace BananaSplit
             // Queue List
             QueueList.SelectedIndexChanged += RenderReferenceImagesListView;
             QueueList.MouseUp += OpenQueueItemContextMenu;
+            QueueList.KeyDown += QueueListKeyDownHandler;
             QueueItemContextMenuProcess.Click += ProcessQueueItem;
             QueueItemContextMenuRemove.Click += RemoveQueueItem;
             QueueListContextMenuProcess.Click += ProcessQueue;
@@ -65,7 +69,13 @@ namespace BananaSplit
             ProcessQueueButton.Click += ProcessQueue;
             QueueList.Resize += AutoSizeQueueList;
 
+            // Drag and Drop
+            this.AllowDrop = true;
+            this.DragOver += AddDragOverItemToQueueDialog;
+            this.DragDrop += AddDragDropItemToQueueDialog;
+
             SettingsForm = new SettingsForm();
+            LogForm = new LogForm();
 
             FFMPEG = new FFMPEG();
             MKVToolNix = new MKVToolNix();
@@ -105,7 +115,8 @@ namespace BananaSplit
                 {
                     QueueItems.AddRange(openFileDialog.FileNames.Select(fn => new QueueItem(fn)));
 
-                    ScanningThread = new Thread(() => {
+                    ScanningThread = new Thread(() =>
+                    {
                         ScanQueueItems();
                     });
 
@@ -132,7 +143,8 @@ namespace BananaSplit
                         }
                     }
 
-                    ScanningThread = new Thread(() => {
+                    ScanningThread = new Thread(() =>
+                    {
                         ScanQueueItems();
                     });
 
@@ -141,31 +153,141 @@ namespace BananaSplit
             }
         }
 
+        private void AddDragOverItemToQueueDialog(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Link;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void AddDragDropItemToQueueDialog(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            if (files != null && files.Any())
+            {
+                QueueItems.AddRange(files.Select(fn => new QueueItem(fn)));
+
+                ScanningThread = new Thread(() =>
+                {
+                    ScanQueueItems();
+                });
+
+                ScanningThread.Start();
+            }
+        }
+
+        private void ShowLog()
+        {
+            Invoke(new MethodInvoker(
+               delegate ()
+               {
+                   if (!LogForm.Visible)
+                   {
+                       LogForm.Show();
+                   }
+               })
+           );
+        }
+
+        private void Log(string text)
+        {
+            Invoke(new MethodInvoker(
+               delegate ()
+               {
+                   if (LogForm.Visible)
+                   {
+                       LogForm.Log(text);
+                   }
+               })
+           );
+        }
+
         private void ScanQueueItems()
         {
+            if (SettingsForm.Settings.ShowLog)
+            {
+                ShowLog();
+            }
+
             SetStatusBarProgressBarValue(0, QueueItems.Count);
 
             var i = 0;
+            int totalNumFrames = 0;
+            int countedFrames = 0;
 
+            // Get all video durations and fps for a better progress bar
+            foreach (var item in QueueItems.Where(qi => !qi.Scanned))
+            {
+                item.Duration = FFMPEG.GetDuration(item.FileName, (s, e) =>
+                {
+                    string logMsg = e.Data;
+                    Log(logMsg);
+                    if (logMsg == null)
+                    {
+                        return;
+                    }
+                    
+                    if (item.Fps == 0)
+                    {
+                        string fpsPattern = @"(?'fps'[.\d]+) fps,";
+                        Regex regex = new Regex(fpsPattern, RegexOptions.Singleline);
+
+                        Match m = regex.Match(logMsg);
+                        if (m.Success && float.TryParse(m.Groups["fps"].Value, out float fps))
+                        {
+                            item.Fps = fps;
+                        }
+                    }
+                });
+
+                item.NumFrames = (int)Math.Ceiling(item.Duration.TotalSeconds * item.Fps);
+                totalNumFrames += item.NumFrames;
+            }
+
+            // Parse items
             foreach (var item in QueueItems.Where(qi => !qi.Scanned))
             {
                 i++;
 
-                SetStatusBarProgressBarValue(i, QueueItems.Count);
                 SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
-                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName);
-                item.Duration = FFMPEG.GetDuration(item.FileName);
+                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName, (s, e) =>
+                {
+                    string logMsg = e.Data;
+                    Log(logMsg);
+                    if (logMsg == null)
+                    {
+                        return;
+                    }
 
+                    string framePattern = @"(\sframe:|frame=\s+)(?'frame'\d+)";
+                    Regex regex = new Regex(framePattern, RegexOptions.Singleline);
+
+                    Match m = regex.Match(logMsg);
+                    if (m.Success && int.TryParse(m.Groups["frame"].Value, out int frame))
+                    {
+                        SetStatusBarProgressBarValue(countedFrames + frame, totalNumFrames);
+                    }
+                });
+                countedFrames += item.NumFrames;
+                SetStatusBarProgressBarValue(countedFrames, totalNumFrames);
+
+                var frameNum = 1;
                 foreach (var frame in item.BlackFrames)
                 {
                     long offset = (long)(SettingsForm.Settings.ReferenceFrameOffset * TimeSpan.TicksPerSecond);
                     TimeSpan referenceFramePosition = frame.End.Add(new TimeSpan(offset));
 
-                    SetStatusBarLabelValue($"Generating frame at {referenceFramePosition}");
+                    SetStatusBarLabelValue($"Generating frame {frameNum} of {item.BlackFrames.Count} at {referenceFramePosition}");
                     frame.ReferenceFrame = new ReferenceFrame();
-                    frame.ReferenceFrame.Data = FFMPEG.ExtractFrame(item.FileName, referenceFramePosition);
+                    frame.ReferenceFrame.Data = FFMPEG.ExtractFrame(item.FileName, referenceFramePosition, FFMPEGLog);
+                    frameNum++;
                 }
 
                 AddItemToQueue(item);
@@ -175,11 +297,27 @@ namespace BananaSplit
             ClearStatusBarProgressBarValue();
         }
 
+        private void FFMPEGLog(object sender, DataReceivedEventArgs e)
+        {
+            if (SettingsForm.Settings.ShowLog)
+            {
+                LogForm.Invoke(
+                                new MethodInvoker(
+                                delegate ()
+                                {
+                                    LogForm.Log(e.Data);
+                                }
+                            )
+                        );
+            }
+        }
+
         private void SetStatusBarProgressBarValue(int value, int maximum)
         {
             StatusBar.Invoke(
                 new MethodInvoker(
-                    delegate () {
+                    delegate ()
+                    {
                         StatusBarProgressBar.Value = value;
                         StatusBarProgressBar.Maximum = maximum;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
@@ -193,7 +331,8 @@ namespace BananaSplit
         {
             StatusBar.Invoke(
                 new MethodInvoker(
-                    delegate () {
+                    delegate ()
+                    {
                         StatusBarProgressBar.Value = 0;
                         StatusBarProgressBar.Maximum = 1;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
@@ -207,7 +346,8 @@ namespace BananaSplit
         {
             StatusBar.Invoke(
                 new MethodInvoker(
-                    delegate () {
+                    delegate ()
+                    {
                         StatusBarLabel.Text = value;
                     }
                 )
@@ -228,6 +368,7 @@ namespace BananaSplit
                         AddFilesToQueueMenuItem.Enabled = false;
                         AddFolderToQueueMenuItem.Enabled = false;
                         Cursor.Current = Cursors.WaitCursor;
+                        Cursor = Cursors.WaitCursor;
                     }
                 )
             );
@@ -247,6 +388,7 @@ namespace BananaSplit
                         AddFilesToQueueMenuItem.Enabled = true;
                         AddFolderToQueueMenuItem.Enabled = true;
                         Cursor.Current = Cursors.Default;
+                        Cursor = Cursors.Default;
                     }
                 )
             );
@@ -256,7 +398,8 @@ namespace BananaSplit
         {
             QueueList.Invoke(
                 new MethodInvoker(
-                    delegate () {
+                    delegate ()
+                    {
                         QueueList.Items.Add(new ListViewItem()
                         {
                             Text = Path.GetFileName(item.FileName),
@@ -339,6 +482,11 @@ namespace BananaSplit
 
         private void ProcessQueue(object sender, EventArgs e)
         {
+            if (SettingsForm.Settings.ShowLog)
+            {
+                ShowLog();
+            }
+
             ProcessingThread = new Thread(() =>
             {
                 LockControls();
@@ -379,7 +527,7 @@ namespace BananaSplit
                 }
 
                 UnlockControls();
-                
+
                 ClearStatusBarProgressBarValue();
             });
 
@@ -433,7 +581,7 @@ namespace BananaSplit
                 chapterTimeSpans.Add(frame.End.Subtract(halfDuration));
             }
 
-            if (!FFMPEG.IsMatroska(queueItem.FileName))
+            if (!FFMPEG.IsMatroska(queueItem.FileName, FFMPEGLog))
             {
                 var matroskaPath = MKVToolNix.RemuxToMatroska(queueItem.FileName);
 
@@ -454,9 +602,23 @@ namespace BananaSplit
             {
                 var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
 
-                FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment);
+                FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment, FFMPEGLog);
 
                 index++;
+            }
+        }
+
+        private void QueueListKeyDownHandler(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                foreach (ListViewItem eachItem in QueueList.SelectedItems)
+                {
+                    QueueItem queueItem = eachItem.Tag as QueueItem;
+
+                    QueueList.Items.Remove(eachItem);
+                    QueueItems.Remove(queueItem);
+                }
             }
         }
     }

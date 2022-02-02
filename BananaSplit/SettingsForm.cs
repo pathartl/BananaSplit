@@ -29,10 +29,12 @@ namespace BananaSplit
             ProcessTypeComboBox.Items.AddRange(typeof(ProcessingType).GetDisplayNames().ToArray());
 
             SaveButton.Click += SaveButton_Click;
+            FormClosing += SettingsForm_FormClosing;
 
             BlackFrameDurationInput.Value = (decimal)Settings.BlackFrameDuration;
             BlackFrameThresholdInput.Value = (decimal)Settings.BlackFrameThreshold;
             ReferenceFrameOffsetInput.Value = (decimal)Settings.ReferenceFrameOffset;
+            ShowLogCheckbox.Checked = Settings.ShowLog;
             DeleteOriginalCheckbox.Checked = Settings.DeleteOriginal;
             FFMPEGArgumentsInput.Text = Settings.FFMPEGArguments;
             ProcessTypeComboBox.SelectedItem = Settings.ProcessType.GetDisplayName();
@@ -43,6 +45,7 @@ namespace BananaSplit
             Settings.BlackFrameDuration = (double)BlackFrameDurationInput.Value;
             Settings.BlackFrameThreshold = (double)BlackFrameThresholdInput.Value;
             Settings.ReferenceFrameOffset = (double)ReferenceFrameOffsetInput.Value;
+            Settings.ShowLog = ShowLogCheckbox.Checked;
             Settings.DeleteOriginal = DeleteOriginalCheckbox.Checked;
             Settings.FFMPEGArguments = FFMPEGArgumentsInput.Text;
             
@@ -61,6 +64,12 @@ namespace BananaSplit
         public void PopulateInputs()
         {
             BlackFrameDurationInput.Text = Settings.BlackFrameDuration.ToString();
+        }
+
+        private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true;
         }
     }
 }

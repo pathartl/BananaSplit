@@ -23,6 +23,7 @@ namespace BananaSplit
         public double BlackFrameThreshold { get; set; }
         public string FFMPEGArguments { get; set; }
         public ProcessingType ProcessType { get; set; }
+        public bool ShowLog { get; set; }
         public bool DeleteOriginal { get; set; }
         public double ReferenceFrameOffset { get; set; }
 
@@ -32,6 +33,7 @@ namespace BananaSplit
             BlackFrameThreshold = 0.01;
             FFMPEGArguments = "-i \"{source}\" -ss {start} -t {duration} -c:v libx264 -crf 18 -preset slow -c:a copy -map 0 \"{destination}\"";
             ProcessType = ProcessingType.SplitAndEncode;
+            ShowLog = false;
             DeleteOriginal = false;
             ReferenceFrameOffset = 1;
         }
@@ -64,6 +66,7 @@ namespace BananaSplit
             BlackFrameThreshold = settings.BlackFrameThreshold;
             FFMPEGArguments = settings.FFMPEGArguments;
             ProcessType = settings.ProcessType;
+            ShowLog = settings.ShowLog;
             DeleteOriginal = settings.DeleteOriginal;
             ReferenceFrameOffset = settings.ReferenceFrameOffset;
         }
