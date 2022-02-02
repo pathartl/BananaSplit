@@ -29,7 +29,7 @@ namespace BananaSplit
             var output = "";
             DataReceivedEventHandler handler = (s, evt) =>
             {
-                output += evt.Data; outputHandler(s, evt);
+                output += evt.Data + "\n"; outputHandler(s, evt);
             };
             Process.ErrorDataReceived += handler;
 
@@ -59,7 +59,7 @@ namespace BananaSplit
             var output = "";
             DataReceivedEventHandler handler = (s, evt) =>
             {
-                output += evt.Data; outputHandler(s, evt);
+                output += evt.Data + "\n"; outputHandler(s, evt);
             };
             Process.ErrorDataReceived += handler;
             
@@ -140,6 +140,7 @@ namespace BananaSplit
         {
             var frames = new List<BlackFrame>();
 
+            Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pix_th={blackFrameThreshold} -f rawvideo -y /NUL";
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
@@ -148,7 +149,7 @@ namespace BananaSplit
             var output = "";
             DataReceivedEventHandler handler = (s, evt) =>
             {
-                output += evt.Data; outputHandler(s, evt);
+                output += evt.Data + "\n"; outputHandler(s, evt);
             };
             Process.ErrorDataReceived += handler;
 
@@ -194,6 +195,7 @@ namespace BananaSplit
         {
             var frames = new List<BlackFrame>();
 
+            Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
             Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
 
@@ -201,7 +203,7 @@ namespace BananaSplit
             var output = "";
             DataReceivedEventHandler handler = (s, evt) =>
             {
-                output += evt.Data; outputHandler(s, evt);
+                output += evt.Data + "\n"; outputHandler(s, evt);
             };
             Process.ErrorDataReceived += handler;
 
