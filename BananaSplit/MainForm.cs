@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -193,6 +194,19 @@ namespace BananaSplit
            );
         }
 
+        private void Log(string text)
+        {
+            Invoke(new MethodInvoker(
+               delegate ()
+               {
+                   if (LogForm.Visible)
+                   {
+                       LogForm.Log(text);
+                   }
+               })
+           );
+        }
+
         private void ScanQueueItems()
         {
             if (SettingsForm.Settings.ShowLog)
@@ -203,17 +217,66 @@ namespace BananaSplit
             SetStatusBarProgressBarValue(0, QueueItems.Count);
 
             var i = 0;
+            int totalNumFrames = 0;
+            int countedFrames = 0;
 
+            // Get all video durations and fps for a better progress bar
+            foreach (var item in QueueItems.Where(qi => !qi.Scanned))
+            {
+                item.Duration = FFMPEG.GetDuration(item.FileName, (s, e) =>
+                {
+                    string logMsg = e.Data;
+                    Log(logMsg);
+                    if (logMsg == null)
+                    {
+                        return;
+                    }
+                    
+                    if (item.Fps == 0)
+                    {
+                        string fpsPattern = @"(?'fps'[.\d]+) fps,";
+                        Regex regex = new Regex(fpsPattern, RegexOptions.Singleline);
+
+                        Match m = regex.Match(logMsg);
+                        if (m.Success && float.TryParse(m.Groups["fps"].Value, out float fps))
+                        {
+                            item.Fps = fps;
+                        }
+                    }
+                });
+
+                item.NumFrames = (int)Math.Ceiling(item.Duration.TotalSeconds * item.Fps);
+                totalNumFrames += item.NumFrames;
+            }
+
+            // Parse items
             foreach (var item in QueueItems.Where(qi => !qi.Scanned))
             {
                 i++;
 
-                SetStatusBarProgressBarValue(i, QueueItems.Count);
                 SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
-                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName, FFMPEGLog);
-                item.Duration = FFMPEG.GetDuration(item.FileName, FFMPEGLog);
+                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName, (s, e) =>
+                {
+                    string logMsg = e.Data;
+                    Log(logMsg);
+                    if (logMsg == null)
+                    {
+                        return;
+                    }
+
+                    string framePattern = @"(\sframe:|frame=\s+)(?'frame'\d+)";
+                    Regex regex = new Regex(framePattern, RegexOptions.Singleline);
+
+                    Match m = regex.Match(logMsg);
+                    if (m.Success && int.TryParse(m.Groups["frame"].Value, out int frame))
+                    {
+                        SetStatusBarProgressBarValue(countedFrames + frame, totalNumFrames);
+                    }
+                });
+                countedFrames += item.NumFrames;
+                SetStatusBarProgressBarValue(countedFrames, totalNumFrames);
 
                 var frameNum = 1;
                 foreach (var frame in item.BlackFrames)

@@ -12,6 +12,8 @@ namespace BananaSplit
         public DateTime LastScanned { get; set; }
         public ICollection<BlackFrame> BlackFrames { get; set; }
         public TimeSpan Duration { get; set; }
+        public float Fps { get; set; }
+        public int NumFrames { get; set; }
 
         public QueueItem(string fileName)
         {
@@ -19,6 +21,8 @@ namespace BananaSplit
             FileName = fileName;
             Scanned = false;
             BlackFrames = new List<BlackFrame>();
+            Fps = 0;
+            NumFrames = 0;
         }
 
         public ICollection<Segment> GetSegments()
