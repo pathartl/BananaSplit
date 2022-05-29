@@ -1,6 +1,5 @@
 ﻿using BananaSplit.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -19,10 +18,12 @@ namespace BananaSplit
 
             BlackFrameDurationInput.Increment = (decimal)0.01;
             BlackFrameThresholdInput.Increment = (decimal)0.01;
+            BlackFramePixelThresholdInput.Increment = (decimal)0.01;
             ReferenceFrameOffsetInput.Increment = (decimal)0.1;
 
             BlackFrameDurationInput.DecimalPlaces = 2;
             BlackFrameThresholdInput.DecimalPlaces = 2;
+            BlackFramePixelThresholdInput.DecimalPlaces = 2;
             ReferenceFrameOffsetInput.DecimalPlaces = 1;
 
             ProcessTypeComboBox.Items.Clear();
@@ -33,6 +34,7 @@ namespace BananaSplit
 
             BlackFrameDurationInput.Value = (decimal)Settings.BlackFrameDuration;
             BlackFrameThresholdInput.Value = (decimal)Settings.BlackFrameThreshold;
+            BlackFramePixelThresholdInput.Value = (decimal)Settings.BlackFramePixelThreshold;
             ReferenceFrameOffsetInput.Value = (decimal)Settings.ReferenceFrameOffset;
             ShowLogCheckbox.Checked = Settings.ShowLog;
             DeleteOriginalCheckbox.Checked = Settings.DeleteOriginal;
@@ -44,11 +46,12 @@ namespace BananaSplit
         {
             Settings.BlackFrameDuration = (double)BlackFrameDurationInput.Value;
             Settings.BlackFrameThreshold = (double)BlackFrameThresholdInput.Value;
+            Settings.BlackFramePixelThreshold = (double)BlackFramePixelThresholdInput.Value;
             Settings.ReferenceFrameOffset = (double)ReferenceFrameOffsetInput.Value;
             Settings.ShowLog = ShowLogCheckbox.Checked;
             Settings.DeleteOriginal = DeleteOriginalCheckbox.Checked;
             Settings.FFMPEGArguments = FFMPEGArgumentsInput.Text;
-            
+
             foreach (ProcessingType type in (ProcessingType[])Enum.GetValues(typeof(ProcessingType)))
             {
                 if (type.GetDisplayName() == (string)ProcessTypeComboBox.SelectedItem)

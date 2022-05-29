@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace BananaSplit.Extensions
 {
@@ -22,7 +20,8 @@ namespace BananaSplit.Extensions
                 {
                     displayNames.Add(field.GetCustomAttribute<DisplayAttribute>().Name);
                 }
-                catch {
+                catch
+                {
                     displayNames.Add(field.Name);
                 }
             }
@@ -42,6 +41,6 @@ namespace BananaSplit.Extensions
             }
         }
 
-        
+
     }
 }
