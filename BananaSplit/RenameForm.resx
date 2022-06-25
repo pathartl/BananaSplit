@@ -57,11 +57,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label5.Text" xml:space="preserve">
-    <value>Instructions
-
-- Increment will try to find the pattern {S00E00} and will try to increment the episode number.
-- Use {i} to use auto increment number starting at 1.
-- If you don't use {i} it will be automatically appended to the end of the file so that names don't collide.</value>
-  </data>
 </root>

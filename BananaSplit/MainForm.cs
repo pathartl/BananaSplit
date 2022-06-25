@@ -318,8 +318,8 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
-                        StatusBarProgressBar.Value = value;
                         StatusBarProgressBar.Maximum = maximum;
+                        StatusBarProgressBar.Value = value;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
                         TaskbarManager.Instance.SetProgressValue(value, maximum);
                     }
@@ -333,8 +333,8 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
-                        StatusBarProgressBar.Value = 0;
                         StatusBarProgressBar.Maximum = 1;
+                        StatusBarProgressBar.Value = 0;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
                         TaskbarManager.Instance.SetProgressValue(0, 1);
                     }
@@ -598,15 +598,91 @@ namespace BananaSplit
             var segments = queueItem.GetSegments();
             var index = 1;
 
+            // Rename original file if user wants it
+            var encodingFileName = queueItem.FileName;
+            if(SettingsForm.Settings.RenameOriginal)
+            {
+                var fi = new FileInfo(encodingFileName);
+                var path = Path.GetDirectoryName(encodingFileName);
+                var name = Path.GetFileNameWithoutExtension(encodingFileName);
+                var ext = Path.GetExtension(encodingFileName);
+                encodingFileName = Path.Combine(path, name + "_original" + ext);
+                fi.MoveTo(encodingFileName);
+            }
+
             foreach (var segment in segments)
             {
-                var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
+                //var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
+                var newName = GetNewName(queueItem.FileName, index);
 
-                FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment, FFMPEGLog);
+                FFMPEG.EncodeSegments(encodingFileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment, FFMPEGLog);
 
                 index++;
             }
         }
+
+        private string GetNewName(string fileName, int index)
+        {
+            var path = Path.GetDirectoryName(fileName);
+            var name = Path.GetFileNameWithoutExtension(fileName);
+            var original = name;
+
+            var oldText = SettingsForm.Settings.RenameFindText;
+            var newText = SettingsForm.Settings.RenameNewText;
+            
+            switch(SettingsForm.Settings.RenameType)
+            {
+                case RenameType.Prefix:
+                    name = newText + name;
+                    break;
+                case RenameType.Suffix:
+                    name += newText;
+                    break;
+                case RenameType.AppendAfter:
+                    var ind = name.IndexOf(oldText);
+                    name = name.Substring(0, ind + oldText.Length) + newText + name.Substring(ind + oldText.Length);
+                    break;
+                case RenameType.Replace:
+                    name = name.Replace(oldText, newText);
+                    break;
+                case RenameType.Increment:
+                    string numPattern = @"(S\d{2}E)(?'num'\d{2})";
+                    name = Regex.Replace(
+                        name,
+                        numPattern,
+                        m => m.Groups[1].Value + (int.Parse(m.Groups["num"].Value) + index - 1).ToString("D2")
+                    );
+                    break;
+            }
+
+            // Add the index if necessary
+            switch (SettingsForm.Settings.RenameType)
+            {
+                case RenameType.Prefix:
+                case RenameType.Suffix:
+                case RenameType.AppendAfter:
+                case RenameType.Replace:
+                    if (name.Contains("{i}"))
+                    {
+                        name.Replace("{i}", "" + index);
+                    }
+                    else
+                    {
+                        name += "-" + index;
+                    }
+                    break;
+            }
+             
+            // Make sure the name is different if we didn't rename the original file
+            if(name == original && !SettingsForm.Settings.RenameOriginal)
+            {
+                name += "-" + index;
+            }
+
+            var newName = Path.Combine(path, name + ".mkv");
+            return newName;
+        }
+
 
         private void QueueListKeyDownHandler(object sender, KeyEventArgs e)
         {

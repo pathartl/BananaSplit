@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 using System.IO;
-using System.Text;
 
 namespace BananaSplit
 {
@@ -17,6 +12,21 @@ namespace BananaSplit
         SplitAndEncode
     }
 
+    public enum RenameType
+    {
+        [Display(Name = "Prefix")]
+        Prefix,
+        [Display(Name = "Suffix")]
+        Suffix,
+        [Display(Name = "Append After")]
+        AppendAfter,
+        [Display(Name = "Replace")]
+        Replace,
+        [Display(Name = "Increment")]
+        Increment
+    }
+
+
     public class Settings
     {
         public double BlackFrameDuration { get; set; }
@@ -26,6 +36,10 @@ namespace BananaSplit
         public bool ShowLog { get; set; }
         public bool DeleteOriginal { get; set; }
         public double ReferenceFrameOffset { get; set; }
+        public string RenameFindText { get; set; }
+        public string RenameNewText { get; set; }
+        public RenameType RenameType { get; set; }
+        public bool RenameOriginal { get; set; }
 
         public Settings()
         {
@@ -36,6 +50,10 @@ namespace BananaSplit
             ShowLog = false;
             DeleteOriginal = false;
             ReferenceFrameOffset = 1;
+            RenameFindText = "";
+            RenameNewText = "{i}";
+            RenameType = RenameType.Increment;
+            RenameOriginal = true;
         }
 
         public void Load()
@@ -69,6 +87,10 @@ namespace BananaSplit
             ShowLog = settings.ShowLog;
             DeleteOriginal = settings.DeleteOriginal;
             ReferenceFrameOffset = settings.ReferenceFrameOffset;
+            RenameFindText = settings.RenameFindText;
+            RenameNewText = settings.RenameNewText;
+            RenameType = settings.RenameType;
+            RenameOriginal = settings.RenameOriginal;
         }
 
         public void Save()
