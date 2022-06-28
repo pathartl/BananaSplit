@@ -175,6 +175,7 @@
             this.ReferenceImageListView.SmallImageList = this.ReferenceImageList;
             this.ReferenceImageListView.TabIndex = 0;
             this.ReferenceImageListView.UseCompatibleStateImageBehavior = false;
+            this.ReferenceImageListView.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.ReferenceImageListView_SelectedIndexChanged);
             this.ReferenceImageListView.SelectedIndexChanged += new System.EventHandler(this.ReferenceImageListView_SelectedIndexChanged);
             // 
             // ReferenceImageList
