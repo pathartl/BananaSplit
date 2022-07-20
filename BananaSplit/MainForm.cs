@@ -369,8 +369,14 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
-                        StatusBarProgressBar.Value = value;
+                        StatusBarProgressBar.Minimum = 0;
                         StatusBarProgressBar.Maximum = maximum;
+
+                        if (value >= maximum)
+                            value = maximum - 1;
+
+                        StatusBarProgressBar.Value = value;
+
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
                         TaskbarManager.Instance.SetProgressValue(value, maximum);
                     }
@@ -384,8 +390,10 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
-                        StatusBarProgressBar.Value = 0;
+                        StatusBarProgressBar.Minimum = 0;
                         StatusBarProgressBar.Maximum = 1;
+
+                        StatusBarProgressBar.Value = 0;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
                         TaskbarManager.Instance.SetProgressValue(0, 1);
                     }
