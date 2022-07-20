@@ -62,7 +62,7 @@ namespace BananaSplit
                 output += evt.Data + "\n"; outputHandler(s, evt);
             };
             Process.ErrorDataReceived += handler;
-            
+
             Process.Start();
             Process.BeginErrorReadLine();
 
@@ -94,7 +94,7 @@ namespace BananaSplit
 
             // ffmpeg uses stderr for some reason
             DataReceivedEventHandler handler = (s, evt) => outputHandler(s, evt);
-            Process.ErrorDataReceived += handler; 
+            Process.ErrorDataReceived += handler;
 
             Process.Start();
             Process.BeginErrorReadLine();
@@ -111,7 +111,7 @@ namespace BananaSplit
             }
         }
 
-       
+
         public void EncodeSegments(string source, string destination, string arguments, Segment segment, DataReceivedEventHandler outputHandler)
         {
             arguments = arguments.Replace("{source}", source);
@@ -136,14 +136,13 @@ namespace BananaSplit
             Process.CancelErrorRead();
         }
 
-        public ICollection<BlackFrame> DetectBlackFrameIntervals(string filePath, double blackFrameDuration, double blackFrameThreshold, DataReceivedEventHandler outputHandler)
+        public ICollection<BlackFrame> DetectBlackFrameIntervals(string filePath, double blackFrameDuration, double blackFrameThreshold, double blackFramePixelThreshold, DataReceivedEventHandler outputHandler)
         {
             var frames = new List<BlackFrame>();
 
             Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
-            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pix_th={blackFrameThreshold} -f rawvideo -y /NUL";
-            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
+            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackdetect=d={blackFrameDuration}:pic_th={blackFrameThreshold}:pix_th={blackFramePixelThreshold} -an -f null -y /NUL";
 
             // ffmpeg uses stderr for some reason
             var output = "";
@@ -182,6 +181,7 @@ namespace BananaSplit
                     frame.Start = TimeSpan.FromSeconds((double)start);
                     frame.End = TimeSpan.FromSeconds((double)end);
                     frame.Duration = TimeSpan.FromSeconds((double)duration);
+                    frame.Marker = frame.GetMiddle();
 
                     frames.Add(frame);
                 }
@@ -197,7 +197,7 @@ namespace BananaSplit
 
             Process.StartInfo.FileName = "ffmpeg.exe";
             Process.StartInfo.RedirectStandardError = true;
-            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f rawvideo -y /NUL";
+            Process.StartInfo.Arguments = $"-i \"{filePath}\" -vf blackframe -f null -y /NUL";
 
             // ffmpeg uses stderr for some reason
             var output = "";
@@ -209,7 +209,7 @@ namespace BananaSplit
 
             Process.Start();
             Process.BeginErrorReadLine();
-            
+
             Process.WaitForExit();
             Process.ErrorDataReceived -= handler;
             Process.CancelErrorRead();
@@ -222,6 +222,8 @@ namespace BananaSplit
             var blackFrames = new List<TimeSpan>();
 
             var matchGroups = matches.GroupBy(m => m.Groups["group"].Value);
+
+
 
             foreach (var group in matchGroups)
             {
