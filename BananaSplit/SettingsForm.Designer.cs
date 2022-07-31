@@ -31,9 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.BlackFramePixelThresholdInput = new System.Windows.Forms.NumericUpDown();
+            this.bplabel1 = new System.Windows.Forms.Label();
             this.ShowLogCheckbox = new System.Windows.Forms.CheckBox();
-            this.FFMPEGArgumentsLegend = new System.Windows.Forms.Label();
-            this.FFMPEGArgumentsInput = new System.Windows.Forms.TextBox();
             this.ReferenceFrameOffsetLabel = new System.Windows.Forms.Label();
             this.ReferenceFrameOffsetInput = new System.Windows.Forms.NumericUpDown();
             this.DeleteOriginalCheckbox = new System.Windows.Forms.CheckBox();
@@ -44,7 +44,11 @@
             this.BlackFrameThresholdLabel = new System.Windows.Forms.Label();
             this.BlackFrameDurationLabel = new System.Windows.Forms.Label();
             this.FFMPEGArgumentsGroupBox = new System.Windows.Forms.GroupBox();
+            this.FFMPEGArgumentsInput = new System.Windows.Forms.TextBox();
+            this.FFMPEGArgumentsLegend = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.startIndexNumericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.RenameOriginalCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.RenameTypeComboBox = new System.Windows.Forms.ComboBox();
@@ -60,35 +64,38 @@
             this.OriginalLabel = new System.Windows.Forms.Label();
             this.NewTextTextBox = new System.Windows.Forms.TextBox();
             this.SaveButton = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.startIndexNumericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BlackFramePixelThresholdInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ReferenceFrameOffsetInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BlackFrameDurationInput)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BlackFrameThresholdInput)).BeginInit();
+            this.FFMPEGArgumentsGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(26, 30);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(911, 999);
+            this.tabControl1.Size = new System.Drawing.Size(912, 953);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.BlackFramePixelThresholdInput);
+            this.tabPage1.Controls.Add(this.bplabel1);
             this.tabPage1.Controls.Add(this.ShowLogCheckbox);
-            this.tabPage1.Controls.Add(this.FFMPEGArgumentsLegend);
-            this.tabPage1.Controls.Add(this.FFMPEGArgumentsInput);
             this.tabPage1.Controls.Add(this.ReferenceFrameOffsetLabel);
             this.tabPage1.Controls.Add(this.ReferenceFrameOffsetInput);
             this.tabPage1.Controls.Add(this.DeleteOriginalCheckbox);
@@ -103,44 +110,46 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.tabPage1.Size = new System.Drawing.Size(895, 945);
+            this.tabPage1.Size = new System.Drawing.Size(896, 899);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // BlackFramePixelThresholdInput
+            // 
+            this.BlackFramePixelThresholdInput.DecimalPlaces = 1;
+            this.BlackFramePixelThresholdInput.Location = new System.Drawing.Point(13, 117);
+            this.BlackFramePixelThresholdInput.Margin = new System.Windows.Forms.Padding(6);
+            this.BlackFramePixelThresholdInput.Name = "BlackFramePixelThresholdInput";
+            this.BlackFramePixelThresholdInput.Size = new System.Drawing.Size(260, 39);
+            this.BlackFramePixelThresholdInput.TabIndex = 12;
+            this.BlackFramePixelThresholdInput.Tag = "BlackFramePixelThreshold";
+            this.BlackFramePixelThresholdInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // bplabel1
+            // 
+            this.bplabel1.AutoSize = true;
+            this.bplabel1.Location = new System.Drawing.Point(290, 119);
+            this.bplabel1.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.bplabel1.Name = "bplabel1";
+            this.bplabel1.Size = new System.Drawing.Size(238, 32);
+            this.bplabel1.TabIndex = 11;
+            this.bplabel1.Text = "Black Pixel Threshold";
+            // 
             // ShowLogCheckbox
             // 
             this.ShowLogCheckbox.AutoSize = true;
-            this.ShowLogCheckbox.Location = new System.Drawing.Point(13, 265);
+            this.ShowLogCheckbox.Location = new System.Drawing.Point(13, 268);
             this.ShowLogCheckbox.Name = "ShowLogCheckbox";
             this.ShowLogCheckbox.Size = new System.Drawing.Size(150, 36);
             this.ShowLogCheckbox.TabIndex = 7;
             this.ShowLogCheckbox.Text = "Show Log";
             this.ShowLogCheckbox.UseVisualStyleBackColor = true;
             // 
-            // FFMPEGArgumentsLegend
-            // 
-            this.FFMPEGArgumentsLegend.AutoSize = true;
-            this.FFMPEGArgumentsLegend.Location = new System.Drawing.Point(708, 434);
-            this.FFMPEGArgumentsLegend.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.FFMPEGArgumentsLegend.Name = "FFMPEGArgumentsLegend";
-            this.FFMPEGArgumentsLegend.Size = new System.Drawing.Size(147, 192);
-            this.FFMPEGArgumentsLegend.TabIndex = 11;
-            this.FFMPEGArgumentsLegend.Text = "Legend:\r\n{source}\r\n{destination}\r\n{start}\r\n{end}\r\n{duration}";
-            // 
-            // FFMPEGArgumentsInput
-            // 
-            this.FFMPEGArgumentsInput.Location = new System.Drawing.Point(30, 427);
-            this.FFMPEGArgumentsInput.Margin = new System.Windows.Forms.Padding(6);
-            this.FFMPEGArgumentsInput.Multiline = true;
-            this.FFMPEGArgumentsInput.Name = "FFMPEGArgumentsInput";
-            this.FFMPEGArgumentsInput.Size = new System.Drawing.Size(663, 458);
-            this.FFMPEGArgumentsInput.TabIndex = 9;
-            // 
             // ReferenceFrameOffsetLabel
             // 
             this.ReferenceFrameOffsetLabel.AutoSize = true;
-            this.ReferenceFrameOffsetLabel.Location = new System.Drawing.Point(290, 147);
+            this.ReferenceFrameOffsetLabel.Location = new System.Drawing.Point(290, 170);
             this.ReferenceFrameOffsetLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.ReferenceFrameOffsetLabel.Name = "ReferenceFrameOffsetLabel";
             this.ReferenceFrameOffsetLabel.Size = new System.Drawing.Size(296, 32);
@@ -150,7 +159,7 @@
             // ReferenceFrameOffsetInput
             // 
             this.ReferenceFrameOffsetInput.DecimalPlaces = 1;
-            this.ReferenceFrameOffsetInput.Location = new System.Drawing.Point(13, 141);
+            this.ReferenceFrameOffsetInput.Location = new System.Drawing.Point(13, 168);
             this.ReferenceFrameOffsetInput.Margin = new System.Windows.Forms.Padding(6);
             this.ReferenceFrameOffsetInput.Name = "ReferenceFrameOffsetInput";
             this.ReferenceFrameOffsetInput.Size = new System.Drawing.Size(260, 39);
@@ -161,7 +170,7 @@
             // DeleteOriginalCheckbox
             // 
             this.DeleteOriginalCheckbox.AutoSize = true;
-            this.DeleteOriginalCheckbox.Location = new System.Drawing.Point(13, 323);
+            this.DeleteOriginalCheckbox.Location = new System.Drawing.Point(13, 313);
             this.DeleteOriginalCheckbox.Margin = new System.Windows.Forms.Padding(6);
             this.DeleteOriginalCheckbox.Name = "DeleteOriginalCheckbox";
             this.DeleteOriginalCheckbox.Size = new System.Drawing.Size(308, 36);
@@ -172,7 +181,7 @@
             // ProcessTypeLabel
             // 
             this.ProcessTypeLabel.AutoSize = true;
-            this.ProcessTypeLabel.Location = new System.Drawing.Point(290, 207);
+            this.ProcessTypeLabel.Location = new System.Drawing.Point(290, 222);
             this.ProcessTypeLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.ProcessTypeLabel.Name = "ProcessTypeLabel";
             this.ProcessTypeLabel.Size = new System.Drawing.Size(219, 32);
@@ -182,10 +191,10 @@
             // ProcessTypeComboBox
             // 
             this.ProcessTypeComboBox.FormattingEnabled = true;
-            this.ProcessTypeComboBox.Location = new System.Drawing.Point(13, 203);
+            this.ProcessTypeComboBox.Location = new System.Drawing.Point(13, 219);
             this.ProcessTypeComboBox.Margin = new System.Windows.Forms.Padding(6);
             this.ProcessTypeComboBox.Name = "ProcessTypeComboBox";
-            this.ProcessTypeComboBox.Size = new System.Drawing.Size(257, 40);
+            this.ProcessTypeComboBox.Size = new System.Drawing.Size(260, 40);
             this.ProcessTypeComboBox.TabIndex = 6;
             this.ProcessTypeComboBox.Tag = "Settings.ProcessType";
             // 
@@ -203,7 +212,7 @@
             // BlackFrameThresholdInput
             // 
             this.BlackFrameThresholdInput.DecimalPlaces = 1;
-            this.BlackFrameThresholdInput.Location = new System.Drawing.Point(13, 79);
+            this.BlackFrameThresholdInput.Location = new System.Drawing.Point(13, 66);
             this.BlackFrameThresholdInput.Margin = new System.Windows.Forms.Padding(6);
             this.BlackFrameThresholdInput.Name = "BlackFrameThresholdInput";
             this.BlackFrameThresholdInput.Size = new System.Drawing.Size(260, 39);
@@ -214,7 +223,7 @@
             // BlackFrameThresholdLabel
             // 
             this.BlackFrameThresholdLabel.AutoSize = true;
-            this.BlackFrameThresholdLabel.Location = new System.Drawing.Point(290, 85);
+            this.BlackFrameThresholdLabel.Location = new System.Drawing.Point(290, 68);
             this.BlackFrameThresholdLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.BlackFrameThresholdLabel.Name = "BlackFrameThresholdLabel";
             this.BlackFrameThresholdLabel.Size = new System.Drawing.Size(255, 32);
@@ -224,7 +233,7 @@
             // BlackFrameDurationLabel
             // 
             this.BlackFrameDurationLabel.AutoSize = true;
-            this.BlackFrameDurationLabel.Location = new System.Drawing.Point(290, 26);
+            this.BlackFrameDurationLabel.Location = new System.Drawing.Point(290, 17);
             this.BlackFrameDurationLabel.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
             this.BlackFrameDurationLabel.Name = "BlackFrameDurationLabel";
             this.BlackFrameDurationLabel.Size = new System.Drawing.Size(273, 32);
@@ -233,14 +242,42 @@
             // 
             // FFMPEGArgumentsGroupBox
             // 
-            this.FFMPEGArgumentsGroupBox.Location = new System.Drawing.Point(13, 387);
+            this.FFMPEGArgumentsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FFMPEGArgumentsGroupBox.Controls.Add(this.FFMPEGArgumentsInput);
+            this.FFMPEGArgumentsGroupBox.Controls.Add(this.FFMPEGArgumentsLegend);
+            this.FFMPEGArgumentsGroupBox.Location = new System.Drawing.Point(13, 361);
             this.FFMPEGArgumentsGroupBox.Margin = new System.Windows.Forms.Padding(6);
             this.FFMPEGArgumentsGroupBox.Name = "FFMPEGArgumentsGroupBox";
             this.FFMPEGArgumentsGroupBox.Padding = new System.Windows.Forms.Padding(6);
-            this.FFMPEGArgumentsGroupBox.Size = new System.Drawing.Size(861, 525);
+            this.FFMPEGArgumentsGroupBox.Size = new System.Drawing.Size(862, 526);
             this.FFMPEGArgumentsGroupBox.TabIndex = 10;
             this.FFMPEGArgumentsGroupBox.TabStop = false;
             this.FFMPEGArgumentsGroupBox.Text = "FFMPEG Arguments";
+            // 
+            // FFMPEGArgumentsInput
+            // 
+            this.FFMPEGArgumentsInput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FFMPEGArgumentsInput.Location = new System.Drawing.Point(12, 44);
+            this.FFMPEGArgumentsInput.Margin = new System.Windows.Forms.Padding(6);
+            this.FFMPEGArgumentsInput.Multiline = true;
+            this.FFMPEGArgumentsInput.Name = "FFMPEGArgumentsInput";
+            this.FFMPEGArgumentsInput.Size = new System.Drawing.Size(664, 470);
+            this.FFMPEGArgumentsInput.TabIndex = 9;
+            // 
+            // FFMPEGArgumentsLegend
+            // 
+            this.FFMPEGArgumentsLegend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.FFMPEGArgumentsLegend.AutoSize = true;
+            this.FFMPEGArgumentsLegend.Location = new System.Drawing.Point(688, 47);
+            this.FFMPEGArgumentsLegend.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.FFMPEGArgumentsLegend.Name = "FFMPEGArgumentsLegend";
+            this.FFMPEGArgumentsLegend.Size = new System.Drawing.Size(147, 192);
+            this.FFMPEGArgumentsLegend.TabIndex = 11;
+            this.FFMPEGArgumentsLegend.Text = "Legend:\r\n{source}\r\n{destination}\r\n{start}\r\n{end}\r\n{duration}";
             // 
             // tabPage2
             // 
@@ -258,10 +295,36 @@
             this.tabPage2.Location = new System.Drawing.Point(8, 46);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(895, 945);
+            this.tabPage2.Size = new System.Drawing.Size(896, 899);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Rename";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // startIndexNumericUpDown1
+            // 
+            this.startIndexNumericUpDown1.Location = new System.Drawing.Point(214, 276);
+            this.startIndexNumericUpDown1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.startIndexNumericUpDown1.Name = "startIndexNumericUpDown1";
+            this.startIndexNumericUpDown1.Size = new System.Drawing.Size(131, 39);
+            this.startIndexNumericUpDown1.TabIndex = 21;
+            this.startIndexNumericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(19, 278);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(127, 32);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Start Index";
             // 
             // RenameOriginalCheckBox
             // 
@@ -393,7 +456,8 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(790, 1054);
+            this.SaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.SaveButton.Location = new System.Drawing.Point(790, 980);
             this.SaveButton.Margin = new System.Windows.Forms.Padding(6);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(139, 49);
@@ -401,60 +465,35 @@
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 278);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(127, 32);
-            this.label6.TabIndex = 20;
-            this.label6.Text = "Start Index";
-            // 
-            // startIndexNumericUpDown1
-            // 
-            this.startIndexNumericUpDown1.Location = new System.Drawing.Point(214, 276);
-            this.startIndexNumericUpDown1.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.startIndexNumericUpDown1.Name = "startIndexNumericUpDown1";
-            this.startIndexNumericUpDown1.Size = new System.Drawing.Size(131, 39);
-            this.startIndexNumericUpDown1.TabIndex = 21;
-            this.startIndexNumericUpDown1.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // SettingsForm
             // 
+            this.AcceptButton = this.SaveButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(953, 1127);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(944, 1044);
             this.Controls.Add(this.SaveButton);
             this.Controls.Add(this.tabControl1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "SettingsForm";
             this.ShowIcon = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Settings";
-            this.TopMost = true;
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BlackFramePixelThresholdInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ReferenceFrameOffsetInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BlackFrameDurationInput)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BlackFrameThresholdInput)).EndInit();
+            this.FFMPEGArgumentsGroupBox.ResumeLayout(false);
+            this.FFMPEGArgumentsGroupBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -477,6 +516,8 @@
         private System.Windows.Forms.GroupBox FFMPEGArgumentsGroupBox;
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.CheckBox ShowLogCheckbox;
+        private System.Windows.Forms.NumericUpDown BlackFramePixelThresholdInput;
+        private System.Windows.Forms.Label bplabel1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label5;

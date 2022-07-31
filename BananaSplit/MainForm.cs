@@ -113,8 +113,17 @@ namespace BananaSplit
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    QueueItems.AddRange(openFileDialog.FileNames.Select(fn => new QueueItem(fn)));
+                    string[] files = openFileDialog.FileNames;
 
+                    bool addedAnything = false;
+
+                    foreach (var file in files)
+                    {
+                        addedAnything |= AddToQueue(file);
+                    }
+
+                    if (addedAnything)
+                    {
                     ScanningThread = new Thread(() =>
                     {
                         ScanQueueItems();
@@ -123,6 +132,7 @@ namespace BananaSplit
                     ScanningThread.Start();
                 }
             }
+        }
         }
 
         private void AddFolderToQueueDialog(object sender, EventArgs e)
@@ -135,14 +145,15 @@ namespace BananaSplit
                 {
                     string[] files = Directory.GetFiles(openFolderDialog.SelectedPath);
 
+                    bool addedAnything = false;
+
                     foreach (var file in files)
                     {
-                        if (SupportedExtensions.Contains(Path.GetExtension(file)))
-                        {
-                            QueueItems.Add(new QueueItem(file));
+                        addedAnything |= AddToQueue(file);
                         }
-                    }
 
+                    if (addedAnything)
+                    {
                     ScanningThread = new Thread(() =>
                     {
                         ScanQueueItems();
@@ -152,6 +163,37 @@ namespace BananaSplit
                 }
             }
         }
+        }
+
+
+        private bool AddToQueue(string path)
+        {
+            bool addedAnything = false;
+            if (File.Exists(path) && SupportedExtensions.Contains(Path.GetExtension(path).ToLower()))
+            {
+                QueueItems.Add(new QueueItem(path));
+                addedAnything = true;
+            }
+            else if (Directory.Exists(path))
+            {
+                foreach (var file in Directory.GetFiles(path))
+                {
+                    if (File.Exists(file) && SupportedExtensions.Contains(Path.GetExtension(file).ToLower()))
+                    {
+                        QueueItems.Add(new QueueItem(file));
+                        addedAnything = true;
+                    }
+                }
+
+                foreach (var folder in Directory.GetDirectories(path))
+                {
+                    addedAnything |= AddToQueue(folder);
+                }
+            }
+
+            return addedAnything;
+        }
+
 
         private void AddDragOverItemToQueueDialog(object sender, DragEventArgs e)
         {
@@ -167,11 +209,19 @@ namespace BananaSplit
 
         private void AddDragDropItemToQueueDialog(object sender, DragEventArgs e)
         {
-            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            bool addedAnything = false;
+
+            var files = ((DataObject)e.Data).GetFileDropList().Cast<string>().ToList();
+
             if (files != null && files.Any())
             {
-                QueueItems.AddRange(files.Select(fn => new QueueItem(fn)));
+                foreach (string file in files)
+                {
+                    addedAnything |= AddToQueue(file);
+                }
 
+                if (addedAnything)
+                {
                 ScanningThread = new Thread(() =>
                 {
                     ScanQueueItems();
@@ -179,6 +229,7 @@ namespace BananaSplit
 
                 ScanningThread.Start();
             }
+        }
         }
 
         private void ShowLog()
@@ -231,7 +282,7 @@ namespace BananaSplit
                     {
                         return;
                     }
-                    
+
                     if (item.Fps == 0)
                     {
                         string fpsPattern = @"(?'fps'[.\d]+) fps,";
@@ -257,7 +308,7 @@ namespace BananaSplit
                 SetStatusBarLabelValue($"Detecting frames for {Path.GetFileName(item.FileName)}");
                 item.Scanned = true;
                 item.LastScanned = DateTime.Now;
-                item.BlackFrames = FFMPEG.DetectBlackFrames(item.FileName, (s, e) =>
+                item.BlackFrames = FFMPEG.DetectBlackFrameIntervals(item.FileName, SettingsForm.Settings.BlackFrameDuration, SettingsForm.Settings.BlackFrameThreshold, SettingsForm.Settings.BlackFramePixelThreshold, (s, e) =>
                 {
                     string logMsg = e.Data;
                     Log(logMsg);
@@ -318,8 +369,14 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
+                        StatusBarProgressBar.Minimum = 0;
                         StatusBarProgressBar.Maximum = maximum;
+
+                        if (value >= maximum)
+                            value = maximum - 1;
+
                         StatusBarProgressBar.Value = value;
+
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Normal);
                         TaskbarManager.Instance.SetProgressValue(value, maximum);
                     }
@@ -333,7 +390,9 @@ namespace BananaSplit
                 new MethodInvoker(
                     delegate ()
                     {
+                        StatusBarProgressBar.Minimum = 0;
                         StatusBarProgressBar.Maximum = 1;
+
                         StatusBarProgressBar.Value = 0;
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
                         TaskbarManager.Instance.SetProgressValue(0, 1);
@@ -526,6 +585,20 @@ namespace BananaSplit
 
                         SetStatusBarLabelValue("Done encoding!");
                         break;
+
+                    case ProcessingType.MKVToolNixSplit:
+                        foreach (var queueItem in QueueItems)
+                        {
+                            i++;
+
+                            SetStatusBarProgressBarValue(i, QueueItems.Count);
+                            SetStatusBarLabelValue($"MKV Splitting for {Path.GetFileName(queueItem.FileName)}");
+
+                            ProcessMKVSplit(queueItem);
+                }
+
+                        SetStatusBarLabelValue("Done splitting!");
+                        break;
                 }
 
                 UnlockControls();
@@ -544,7 +617,7 @@ namespace BananaSplit
 
                 LockControls();
 
-                SetStatusBarProgressBarValue(1, 1);
+                //SetStatusBarProgressBarValue(1, 1);
 
                 switch (SettingsForm.Settings.ProcessType)
                 {
@@ -559,11 +632,17 @@ namespace BananaSplit
                         ProcessSplitAndEncode(queueItem);
                         SetStatusBarLabelValue("Done encoding!");
                         break;
+
+                    case ProcessingType.MKVToolNixSplit:
+                        SetStatusBarLabelValue($"Splitting for {Path.GetFileName(queueItem.FileName)}");
+                        ProcessMKVSplit(queueItem);
+                        SetStatusBarLabelValue("Done splitting!");
+                        break;
                 }
 
                 UnlockControls();
 
-                ClearStatusBarProgressBarValue();
+                //ClearStatusBarProgressBarValue();
             });
 
             ProcessingThread.Start();
@@ -594,6 +673,28 @@ namespace BananaSplit
 
             MKVToolNix.InjectChapters(queueItem.FileName, chapters);
         }
+
+
+
+
+
+
+        private void ProcessMKVSplit(QueueItem queueItem)
+        {
+            var segments = queueItem.GetSegments();
+
+            var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), "output", Path.GetFileNameWithoutExtension(queueItem.FileName) + "-%03d.mkv");
+
+            MKVToolNix.SplitSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segments.ToList(), FFMPEGLog);
+
+        }
+
+
+
+
+
+
+
 
         private void ProcessSplitAndEncode(QueueItem queueItem)
         {

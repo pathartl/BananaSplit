@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BananaSplit
 {
@@ -8,8 +6,10 @@ namespace BananaSplit
     {
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
-        public TimeSpan Duration {
-            get {
+        public TimeSpan Duration
+        {
+            get
+            {
                 return End.Subtract(Start);
             }
         }

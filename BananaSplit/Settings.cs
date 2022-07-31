@@ -9,7 +9,9 @@ namespace BananaSplit
         [Display(Name = "Matroska Chapters")]
         MatroskaChapters,
         [Display(Name = "Split and Encode")]
-        SplitAndEncode
+        SplitAndEncode,
+        [Display(Name = "MKVToolNix Split")]
+        MKVToolNixSplit
     }
 
     public enum RenameType
@@ -31,6 +33,7 @@ namespace BananaSplit
     {
         public double BlackFrameDuration { get; set; }
         public double BlackFrameThreshold { get; set; }
+        public double BlackFramePixelThreshold { get; set; }
         public string FFMPEGArguments { get; set; }
         public ProcessingType ProcessType { get; set; }
         public bool ShowLog { get; set; }
@@ -44,9 +47,10 @@ namespace BananaSplit
         public Settings()
         {
             BlackFrameDuration = 0.04;
-            BlackFrameThreshold = 0.01;
+            BlackFrameThreshold = 0.98;
+            BlackFramePixelThreshold = 0.15;
             FFMPEGArguments = "-i \"{source}\" -ss {start} -t {duration} -c:v libx264 -crf 18 -preset slow -c:a copy -map 0 \"{destination}\"";
-            ProcessType = ProcessingType.SplitAndEncode;
+            ProcessType = ProcessingType.MKVToolNixSplit;
             ShowLog = false;
             DeleteOriginal = false;
             ReferenceFrameOffset = 1;
@@ -82,6 +86,7 @@ namespace BananaSplit
 
             BlackFrameDuration = settings.BlackFrameDuration;
             BlackFrameThreshold = settings.BlackFrameThreshold;
+            BlackFramePixelThreshold = settings.BlackFramePixelThreshold;
             FFMPEGArguments = settings.FFMPEGArguments;
             ProcessType = settings.ProcessType;
             ShowLog = settings.ShowLog;
