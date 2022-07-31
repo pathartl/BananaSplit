@@ -113,23 +113,25 @@ namespace BananaSplit
 
         private void RenameTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(RenameTypeComboBox.SelectedItem as string, out RenameType type);
+            var type = GetRenameType();
             switch (type)
             {
                 case RenameType.Prefix:
                     FindTextBox.Enabled = false;
-                    RenameLabel.Text = "Suffix";
+                    RenameLabel.Text = "Prefix";
                     break;
                 case RenameType.Suffix:
                     FindTextBox.Enabled = false;
-                    RenameLabel.Text = "Prefix";
+                    RenameLabel.Text = "Suffix";
                     break;
                 case RenameType.AppendAfter:
                     FindTextBox.Enabled = true;
+                    NewTextTextBox.Enabled = true;
                     RenameLabel.Text = "Append After";
                     break;
                 case RenameType.Replace:
                     FindTextBox.Enabled = true;
+                    NewTextTextBox.Enabled = true;
                     RenameLabel.Text = "Replace";
                     break;
                 case RenameType.Increment:
@@ -158,6 +160,7 @@ namespace BananaSplit
         private void AppendAfterRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             FindTextBox.Enabled = true;
+            NewTextTextBox.Enabled = true;
             RenameLabel.Text = "Append After";
             UpdateExample();
         }
@@ -165,6 +168,7 @@ namespace BananaSplit
         private void ReplaceRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             FindTextBox.Enabled = true;
+            NewTextTextBox.Enabled = true;
             RenameLabel.Text = "Replace";
             UpdateExample();
         }
@@ -186,9 +190,15 @@ namespace BananaSplit
             UpdateExample();
         }
 
+        private RenameType GetRenameType()
+        {
+            Enum.TryParse((RenameTypeComboBox.SelectedItem as string).Replace(" ", ""), out RenameType type);
+            return type;
+        }
+
         private void UpdateExample()
         {
-            Enum.TryParse(RenameTypeComboBox.SelectedItem as string, out RenameType type);
+            var type = GetRenameType();
             switch (type)
             {
                 case RenameType.Prefix:
@@ -203,7 +213,11 @@ namespace BananaSplit
                     break;
                 case RenameType.Replace:
                     OriginalLabel.Text = SampleOriginalP1Text + FindTextBox.Text + SampleOriginalP2Text + SampleExtensionText;
-                    ResultLabel.Text = OriginalLabel.Text.Replace(FindTextBox.Text, NewTextTextBox.Text);
+                    ResultLabel.Text = OriginalLabel.Text;
+                    if (!string.IsNullOrEmpty(FindTextBox.Text))
+                    {
+                        ResultLabel.Text = OriginalLabel.Text.Replace(FindTextBox.Text, NewTextTextBox.Text);
+                    }
                     break;
                 case RenameType.Increment:
                     OriginalLabel.Text = SampleOriginalP1Text + SampleIncrementText + "2" + SampleOriginalP2Text + SampleExtensionText;
@@ -219,13 +233,13 @@ namespace BananaSplit
                 case RenameType.Replace:
                     if(ResultLabel.Text.Contains("{i}"))
                     {
-                        OriginalLabel.Text.Replace("{i}", "2");
-                        ResultLabel.Text.Replace("{i}", "3");
+                        OriginalLabel.Text = OriginalLabel.Text.Replace("{i}", "1");
+                        ResultLabel.Text = ResultLabel.Text.Replace("{i}", "1");
                     }
                     else
                     {
-                        OriginalLabel.Text.Replace(".mkv", "-2.mkv");
-                        ResultLabel.Text.Replace(".mkv", "-3.mkv");
+                        OriginalLabel.Text = OriginalLabel.Text.Replace(".mkv", "-1.mkv");
+                        ResultLabel.Text = ResultLabel.Text.Replace(".mkv", "-2.mkv");
                     }
                     break;
             }

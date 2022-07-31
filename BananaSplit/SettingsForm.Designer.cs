@@ -45,6 +45,7 @@
             this.BlackFrameDurationLabel = new System.Windows.Forms.Label();
             this.FFMPEGArgumentsGroupBox = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.RenameOriginalCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.RenameTypeComboBox = new System.Windows.Forms.ComboBox();
             this.RenameLabel = new System.Windows.Forms.Label();
@@ -59,7 +60,8 @@
             this.OriginalLabel = new System.Windows.Forms.Label();
             this.NewTextTextBox = new System.Windows.Forms.TextBox();
             this.SaveButton = new System.Windows.Forms.Button();
-            this.RenameOriginalCheckBox = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.startIndexNumericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ReferenceFrameOffsetInput)).BeginInit();
@@ -68,6 +70,7 @@
             this.tabPage2.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -241,6 +244,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.startIndexNumericUpDown1);
+            this.tabPage2.Controls.Add(this.label6);
             this.tabPage2.Controls.Add(this.RenameOriginalCheckBox);
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.RenameTypeComboBox);
@@ -257,6 +262,18 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Rename";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // RenameOriginalCheckBox
+            // 
+            this.RenameOriginalCheckBox.AutoSize = true;
+            this.RenameOriginalCheckBox.Location = new System.Drawing.Point(19, 213);
+            this.RenameOriginalCheckBox.Name = "RenameOriginalCheckBox";
+            this.RenameOriginalCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.RenameOriginalCheckBox.Size = new System.Drawing.Size(223, 36);
+            this.RenameOriginalCheckBox.TabIndex = 19;
+            this.RenameOriginalCheckBox.Text = "Rename Original";
+            this.RenameOriginalCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.RenameOriginalCheckBox.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
@@ -384,17 +401,31 @@
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
             // 
-            // RenameOriginalCheckBox
+            // label6
             // 
-            this.RenameOriginalCheckBox.AutoSize = true;
-            this.RenameOriginalCheckBox.Location = new System.Drawing.Point(19, 213);
-            this.RenameOriginalCheckBox.Name = "RenameOriginalCheckBox";
-            this.RenameOriginalCheckBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.RenameOriginalCheckBox.Size = new System.Drawing.Size(223, 36);
-            this.RenameOriginalCheckBox.TabIndex = 19;
-            this.RenameOriginalCheckBox.Text = "Rename Original";
-            this.RenameOriginalCheckBox.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.RenameOriginalCheckBox.UseVisualStyleBackColor = true;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(19, 278);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(127, 32);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Start Index";
+            // 
+            // startIndexNumericUpDown1
+            // 
+            this.startIndexNumericUpDown1.Location = new System.Drawing.Point(214, 276);
+            this.startIndexNumericUpDown1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.startIndexNumericUpDown1.Name = "startIndexNumericUpDown1";
+            this.startIndexNumericUpDown1.Size = new System.Drawing.Size(131, 39);
+            this.startIndexNumericUpDown1.TabIndex = 21;
+            this.startIndexNumericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // SettingsForm
             // 
@@ -423,6 +454,7 @@
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -460,5 +492,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox RenameTypeComboBox;
         private System.Windows.Forms.CheckBox RenameOriginalCheckBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown startIndexNumericUpDown1;
     }
 }
