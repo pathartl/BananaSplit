@@ -609,7 +609,15 @@ namespace BananaSplit
                 var name = Path.GetFileNameWithoutExtension(encodingFileName);
                 var ext = Path.GetExtension(encodingFileName);
                 encodingFileName = Path.Combine(path, name + "_original" + ext);
-                fi.MoveTo(encodingFileName);
+                try
+                {
+                    fi.MoveTo(encodingFileName);
+                }
+                catch
+                {
+                    MessageBox.Show("There was an error renaming the original file: " + encodingFileName + "/nMake sure it's not being used by another process!", "Error", MessageBoxButtons.OK);
+                    return;
+                }
             }
 
             foreach (var segment in segments)
