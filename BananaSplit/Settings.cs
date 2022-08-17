@@ -43,6 +43,8 @@ namespace BananaSplit
         public string RenameNewText { get; set; }
         public RenameType RenameType { get; set; }
         public bool RenameOriginal { get; set; }
+        public int StartIndex { get; set; }
+        public int Padding { get; set; }
 
         public Settings()
         {
@@ -58,6 +60,8 @@ namespace BananaSplit
             RenameNewText = "{i}";
             RenameType = RenameType.Increment;
             RenameOriginal = true;
+            StartIndex = 1;
+            Padding = 2;
         }
 
         public void Load()
@@ -96,6 +100,8 @@ namespace BananaSplit
             RenameNewText = settings.RenameNewText;
             RenameType = settings.RenameType;
             RenameOriginal = settings.RenameOriginal;
+            StartIndex = settings.StartIndex;
+            Padding = settings.Padding;
         }
 
         public void Save()

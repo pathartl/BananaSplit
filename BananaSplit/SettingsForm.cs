@@ -44,6 +44,9 @@ namespace BananaSplit
 
             RenameOriginalCheckBox.Checked = true;
 
+            StartIndexInput.Value = 1;
+            PaddingInput.Value = 2;
+
             // Restore load values
             BlackFrameDurationInput.Value = (decimal)Settings.BlackFrameDuration;
             BlackFrameThresholdInput.Value = (decimal)Settings.BlackFrameThreshold;
@@ -59,6 +62,8 @@ namespace BananaSplit
             RenameTypeComboBox.SelectedIndexChanged += RenameTypeComboBox_SelectedIndexChanged;
             RenameTypeComboBox.SelectedItem = Settings.RenameType.GetDisplayName();
             RenameOriginalCheckBox.Checked = Settings.RenameOriginal;
+            StartIndexInput.Value = Settings.StartIndex;
+            PaddingInput.Value = Settings.Padding;
 
             UpdateExample();
 
@@ -82,6 +87,8 @@ namespace BananaSplit
             Settings.RenameFindText = FindTextBox.Text;
             Settings.RenameNewText = NewTextTextBox.Text;
             Settings.RenameOriginal = RenameOriginalCheckBox.Checked;
+            Settings.StartIndex = (int)StartIndexInput.Value;
+            Settings.Padding = (int)PaddingInput.Value;
 
             foreach (ProcessingType type in (ProcessingType[])Enum.GetValues(typeof(ProcessingType)))
             {
@@ -121,10 +128,12 @@ namespace BananaSplit
             {
                 case RenameType.Prefix:
                     FindTextBox.Enabled = false;
+                    NewTextTextBox.Enabled = true;
                     RenameLabel.Text = "Prefix";
                     break;
                 case RenameType.Suffix:
                     FindTextBox.Enabled = false;
+                    NewTextTextBox.Enabled = true;
                     RenameLabel.Text = "Suffix";
                     break;
                 case RenameType.AppendAfter:

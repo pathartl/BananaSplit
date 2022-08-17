@@ -47,7 +47,7 @@
             this.FFMPEGArgumentsInput = new System.Windows.Forms.TextBox();
             this.FFMPEGArgumentsLegend = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.startIndexNumericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.StartIndexInput = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.RenameOriginalCheckBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -64,6 +64,8 @@
             this.OriginalLabel = new System.Windows.Forms.Label();
             this.NewTextTextBox = new System.Windows.Forms.TextBox();
             this.SaveButton = new System.Windows.Forms.Button();
+            this.PaddingInput = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BlackFramePixelThresholdInput)).BeginInit();
@@ -72,9 +74,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.BlackFrameThresholdInput)).BeginInit();
             this.FFMPEGArgumentsGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StartIndexInput)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PaddingInput)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -281,7 +284,9 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.startIndexNumericUpDown1);
+            this.tabPage2.Controls.Add(this.PaddingInput);
+            this.tabPage2.Controls.Add(this.label7);
+            this.tabPage2.Controls.Add(this.StartIndexInput);
             this.tabPage2.Controls.Add(this.label6);
             this.tabPage2.Controls.Add(this.RenameOriginalCheckBox);
             this.tabPage2.Controls.Add(this.label1);
@@ -300,18 +305,18 @@
             this.tabPage2.Text = "Rename";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // startIndexNumericUpDown1
+            // StartIndexInput
             // 
-            this.startIndexNumericUpDown1.Location = new System.Drawing.Point(214, 276);
-            this.startIndexNumericUpDown1.Maximum = new decimal(new int[] {
-            10000,
+            this.StartIndexInput.Location = new System.Drawing.Point(214, 276);
+            this.StartIndexInput.Maximum = new decimal(new int[] {
+            1000,
             0,
             0,
             0});
-            this.startIndexNumericUpDown1.Name = "startIndexNumericUpDown1";
-            this.startIndexNumericUpDown1.Size = new System.Drawing.Size(131, 39);
-            this.startIndexNumericUpDown1.TabIndex = 21;
-            this.startIndexNumericUpDown1.Value = new decimal(new int[] {
+            this.StartIndexInput.Name = "StartIndexInput";
+            this.StartIndexInput.Size = new System.Drawing.Size(131, 39);
+            this.StartIndexInput.TabIndex = 21;
+            this.StartIndexInput.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -465,6 +470,37 @@
             this.SaveButton.Text = "Save";
             this.SaveButton.UseVisualStyleBackColor = true;
             // 
+            // PaddingInput
+            // 
+            this.PaddingInput.Location = new System.Drawing.Point(214, 341);
+            this.PaddingInput.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.PaddingInput.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.PaddingInput.Name = "PaddingInput";
+            this.PaddingInput.Size = new System.Drawing.Size(131, 39);
+            this.PaddingInput.TabIndex = 23;
+            this.PaddingInput.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(19, 343);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(100, 32);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Padding";
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.SaveButton;
@@ -490,10 +526,11 @@
             this.FFMPEGArgumentsGroupBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.startIndexNumericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StartIndexInput)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PaddingInput)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -534,6 +571,8 @@
         private System.Windows.Forms.ComboBox RenameTypeComboBox;
         private System.Windows.Forms.CheckBox RenameOriginalCheckBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.NumericUpDown startIndexNumericUpDown1;
+        private System.Windows.Forms.NumericUpDown StartIndexInput;
+        private System.Windows.Forms.NumericUpDown PaddingInput;
+        private System.Windows.Forms.Label label7;
     }
 }

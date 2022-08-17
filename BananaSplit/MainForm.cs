@@ -773,9 +773,10 @@ namespace BananaSplit
                 case RenameType.Suffix:
                 case RenameType.AppendAfter:
                 case RenameType.Replace:
+                case RenameType.Increment:
                     if (name.Contains("{i}"))
                     {
-                        name.Replace("{i}", "" + index);
+                        name.Replace("{i}", "" + index.ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
                     }
                     else
                     {
@@ -784,13 +785,20 @@ namespace BananaSplit
                     break;
             }
              
-            // Make sure the name is different if we didn't rename the original file
-            if(name == original && !SettingsForm.Settings.RenameOriginal)
+            // Make sure the name is different
+            if(name == original)
             {
                 name += "-" + index;
             }
 
             var newName = Path.Combine(path, name + ".mkv");
+
+            // Rename again if there's already a file with that name
+            if(File.Exists(newName))
+            {
+                newName = Path.Combine(path, name + DateTimeOffset.Now.ToUnixTimeSeconds() + ".mkv");
+            }
+
             return newName;
         }
 
