@@ -44,6 +44,7 @@ namespace BananaSplit
 
             RenameOriginalCheckBox.Checked = true;
 
+            MultiplierInput.Value = 2;
             StartIndexInput.Value = 1;
             PaddingInput.Value = 2;
 
@@ -62,6 +63,7 @@ namespace BananaSplit
             RenameTypeComboBox.SelectedIndexChanged += RenameTypeComboBox_SelectedIndexChanged;
             RenameTypeComboBox.SelectedItem = Settings.RenameType.GetDisplayName();
             RenameOriginalCheckBox.Checked = Settings.RenameOriginal;
+            MultiplierInput.Value = Settings.IncrementMultiplier;
             StartIndexInput.Value = Settings.StartIndex;
             PaddingInput.Value = Settings.Padding;
 
@@ -87,6 +89,7 @@ namespace BananaSplit
             Settings.RenameFindText = FindTextBox.Text;
             Settings.RenameNewText = NewTextTextBox.Text;
             Settings.RenameOriginal = RenameOriginalCheckBox.Checked;
+            Settings.IncrementMultiplier = (int)MultiplierInput.Value;
             Settings.StartIndex = (int)StartIndexInput.Value;
             Settings.Padding = (int)PaddingInput.Value;
 
@@ -158,6 +161,7 @@ namespace BananaSplit
         private void PrefixRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             FindTextBox.Enabled = false;
+            MultiplierInput.Enabled = false;
             RenameLabel.Text = "Suffix";
             UpdateExample();
         }
@@ -165,6 +169,7 @@ namespace BananaSplit
         private void SuffixRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             FindTextBox.Enabled = false;
+            MultiplierInput.Enabled = false;
             RenameLabel.Text = "Prefix";
             UpdateExample();
         }
@@ -173,6 +178,7 @@ namespace BananaSplit
         {
             FindTextBox.Enabled = true;
             NewTextTextBox.Enabled = true;
+            MultiplierInput.Enabled = false;
             RenameLabel.Text = "Append After";
             UpdateExample();
         }
@@ -181,6 +187,7 @@ namespace BananaSplit
         {
             FindTextBox.Enabled = true;
             NewTextTextBox.Enabled = true;
+            MultiplierInput.Enabled = false;
             RenameLabel.Text = "Replace";
             UpdateExample();
         }
@@ -189,6 +196,7 @@ namespace BananaSplit
         {
             FindTextBox.Enabled = false;
             NewTextTextBox.Enabled = false;
+            MultiplierInput.Enabled = true;
             UpdateExample();
         }
 
@@ -243,7 +251,7 @@ namespace BananaSplit
                 case RenameType.Suffix:
                 case RenameType.AppendAfter:
                 case RenameType.Replace:
-                    if(ResultLabel.Text.Contains("{i}"))
+                    if (ResultLabel.Text.Contains("{i}"))
                     {
                         OriginalLabel.Text = OriginalLabel.Text.Replace("{i}", "1");
                         ResultLabel.Text = ResultLabel.Text.Replace("{i}", "1");

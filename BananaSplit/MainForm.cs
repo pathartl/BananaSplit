@@ -124,15 +124,15 @@ namespace BananaSplit
 
                     if (addedAnything)
                     {
-                    ScanningThread = new Thread(() =>
-                    {
-                        ScanQueueItems();
-                    });
+                        ScanningThread = new Thread(() =>
+                        {
+                            ScanQueueItems();
+                        });
 
-                    ScanningThread.Start();
+                        ScanningThread.Start();
+                    }
                 }
             }
-        }
         }
 
         private void AddFolderToQueueDialog(object sender, EventArgs e)
@@ -150,19 +150,19 @@ namespace BananaSplit
                     foreach (var file in files)
                     {
                         addedAnything |= AddToQueue(file);
-                        }
+                    }
 
                     if (addedAnything)
                     {
-                    ScanningThread = new Thread(() =>
-                    {
-                        ScanQueueItems();
-                    });
+                        ScanningThread = new Thread(() =>
+                        {
+                            ScanQueueItems();
+                        });
 
-                    ScanningThread.Start();
+                        ScanningThread.Start();
+                    }
                 }
             }
-        }
         }
 
 
@@ -222,14 +222,14 @@ namespace BananaSplit
 
                 if (addedAnything)
                 {
-                ScanningThread = new Thread(() =>
-                {
-                    ScanQueueItems();
-                });
+                    ScanningThread = new Thread(() =>
+                    {
+                        ScanQueueItems();
+                    });
 
-                ScanningThread.Start();
+                    ScanningThread.Start();
+                }
             }
-        }
         }
 
         private void ShowLog()
@@ -595,7 +595,7 @@ namespace BananaSplit
                             SetStatusBarLabelValue($"MKV Splitting for {Path.GetFileName(queueItem.FileName)}");
 
                             ProcessMKVSplit(queueItem);
-                }
+                        }
 
                         SetStatusBarLabelValue("Done splitting!");
                         break;
@@ -703,7 +703,7 @@ namespace BananaSplit
 
             // Rename original file if user wants it
             var encodingFileName = queueItem.FileName;
-            if(SettingsForm.Settings.RenameOriginal)
+            if (SettingsForm.Settings.RenameOriginal)
             {
                 var fi = new FileInfo(encodingFileName);
                 var path = Path.GetDirectoryName(encodingFileName);
@@ -740,8 +740,8 @@ namespace BananaSplit
 
             var oldText = SettingsForm.Settings.RenameFindText;
             var newText = SettingsForm.Settings.RenameNewText;
-            
-            switch(SettingsForm.Settings.RenameType)
+
+            switch (SettingsForm.Settings.RenameType)
             {
                 case RenameType.Prefix:
                     name = newText + name;
@@ -761,7 +761,18 @@ namespace BananaSplit
                     name = Regex.Replace(
                         name,
                         numPattern,
-                        m => m.Groups[1].Value + (int.Parse(m.Groups["num"].Value) + index - 1).ToString("D2")
+                        m =>
+                        {
+                            if (SettingsForm.Settings.IncrementMultiplier == 0)
+                                return m.Groups[1].Value + (int.Parse(m.Groups["num"].Value) + index - 1).ToString("D2");
+
+                            return m.Groups[1].Value +
+                            (
+                                ((int.Parse(m.Groups["num"].Value) - 1) * SettingsForm.Settings.IncrementMultiplier +
+                                ((index - 1) % SettingsForm.Settings.IncrementMultiplier)) +
+                                1
+                            ).ToString("D2");
+                        }
                     );
                     break;
             }
@@ -776,17 +787,25 @@ namespace BananaSplit
                 case RenameType.Increment:
                     if (name.Contains("{i}"))
                     {
-                        name.Replace("{i}", "" + index.ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
+                        if (SettingsForm.Settings.StartIndex == 0)
+                        {
+                            name.Replace("{i}", "" + index.ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
+                        }
+                        else
+                        {
+                            name.Replace("{i}", "" + (SettingsForm.Settings.StartIndex + index - 1).ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
+                        }
+
                     }
-                    else
-                    {
-                        name += "-" + index;
-                    }
+                    //else
+                    //{
+                    //    name += "-" + index;
+                    //}
                     break;
             }
-             
+
             // Make sure the name is different
-            if(name == original)
+            if (name == original)
             {
                 name += "-" + index;
             }
@@ -794,7 +813,7 @@ namespace BananaSplit
             var newName = Path.Combine(path, name + ".mkv");
 
             // Rename again if there's already a file with that name
-            if(File.Exists(newName))
+            if (File.Exists(newName))
             {
                 newName = Path.Combine(path, name + DateTimeOffset.Now.ToUnixTimeSeconds() + ".mkv");
             }
