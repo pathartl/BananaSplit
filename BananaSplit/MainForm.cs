@@ -428,6 +428,7 @@ namespace BananaSplit
                         AddFolderToQueueMenuItem.Enabled = false;
                         Cursor.Current = Cursors.WaitCursor;
                         Cursor = Cursors.WaitCursor;
+                        AllowDrop = false;
                     }
                 )
             );
@@ -448,6 +449,7 @@ namespace BananaSplit
                         AddFolderToQueueMenuItem.Enabled = true;
                         Cursor.Current = Cursors.Default;
                         Cursor = Cursors.Default;
+                        AllowDrop = true;
                     }
                 )
             );
@@ -699,14 +701,124 @@ namespace BananaSplit
             var segments = queueItem.GetSegments();
             var index = 1;
 
+            // Rename original file if user wants it
+            var encodingFileName = queueItem.FileName;
+            if (SettingsForm.Settings.RenameOriginal)
+            {
+                var fi = new FileInfo(encodingFileName);
+                var path = Path.GetDirectoryName(encodingFileName);
+                var name = Path.GetFileNameWithoutExtension(encodingFileName);
+                var ext = Path.GetExtension(encodingFileName);
+                encodingFileName = Path.Combine(path, name + "_original" + ext);
+                try
+                {
+                    fi.MoveTo(encodingFileName);
+                }
+                catch
+                {
+                    MessageBox.Show("There was an error renaming the original file: " + encodingFileName + "/nMake sure it's not being used by another process!", "Error", MessageBoxButtons.OK);
+                    return;
+                }
+            }
+
             foreach (var segment in segments)
             {
-                var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
+                //var newName = Path.Combine(Path.GetDirectoryName(queueItem.FileName), Path.GetFileNameWithoutExtension(queueItem.FileName) + "-" + index + ".mkv");
+                var newName = GetNewName(queueItem.FileName, index);
 
-                FFMPEG.EncodeSegments(queueItem.FileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment, FFMPEGLog);
+                FFMPEG.EncodeSegments(encodingFileName, newName, SettingsForm.Settings.FFMPEGArguments.Replace("\r\n", " "), segment, FFMPEGLog);
 
                 index++;
             }
+        }
+
+        private string GetNewName(string fileName, int index)
+        {
+            var path = Path.GetDirectoryName(fileName);
+            var name = Path.GetFileNameWithoutExtension(fileName);
+            var original = name;
+
+            var oldText = SettingsForm.Settings.RenameFindText;
+            var newText = SettingsForm.Settings.RenameNewText;
+
+            switch (SettingsForm.Settings.RenameType)
+            {
+                case RenameType.Prefix:
+                    name = newText + name;
+                    break;
+                case RenameType.Suffix:
+                    name += newText;
+                    break;
+                case RenameType.AppendAfter:
+                    var ind = name.IndexOf(oldText);
+                    name = name.Substring(0, ind + oldText.Length) + newText + name.Substring(ind + oldText.Length);
+                    break;
+                case RenameType.Replace:
+                    name = name.Replace(oldText, newText);
+                    break;
+                case RenameType.Increment:
+                    string numPattern = @"(S\d{2}E)(?'num'\d{2})";
+                    name = Regex.Replace(
+                        name,
+                        numPattern,
+                        m =>
+                        {
+                            if (SettingsForm.Settings.IncrementMultiplier == 0)
+                                return m.Groups[1].Value + (int.Parse(m.Groups["num"].Value) + index - 1).ToString("D2");
+
+                            return m.Groups[1].Value +
+                            (
+                                ((int.Parse(m.Groups["num"].Value) - 1) * SettingsForm.Settings.IncrementMultiplier +
+                                ((index - 1) % SettingsForm.Settings.IncrementMultiplier)) +
+                                1
+                            ).ToString("D2");
+                        }
+                    );
+                    break;
+            }
+
+            // Add the index if necessary
+            switch (SettingsForm.Settings.RenameType)
+            {
+                case RenameType.Prefix:
+                case RenameType.Suffix:
+                case RenameType.AppendAfter:
+                case RenameType.Replace:
+                case RenameType.Increment:
+                    if (name.Contains("{i}"))
+                    {
+                        if (SettingsForm.Settings.StartIndex == 0)
+                        {
+                            name.Replace("{i}", "" + index.ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
+                        }
+                        else
+                        {
+                            name.Replace("{i}", "" + (SettingsForm.Settings.StartIndex + index - 1).ToString().PadLeft(SettingsForm.Settings.Padding, '0'));
+                        }
+
+                    }
+                    //else
+                    //{
+                    //    name += "-" + index;
+                    //}
+                    break;
+            }
+
+            // Make sure the name is different
+            if (name == original)
+            {
+                name += "-" + index;
+            }
+
+            var newName = Path.Combine(path, name + ".mkv");
+
+            // Rename again if there's already a file with that name
+            if (File.Exists(newName))
+            {
+                newName = Path.Combine(path, name + DateTimeOffset.Now.ToUnixTimeSeconds() + ".mkv");
+            }
+
+            return newName;
         }
 
 

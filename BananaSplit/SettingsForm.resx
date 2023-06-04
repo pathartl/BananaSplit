@@ -57,4 +57,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>Instructions
+
+- Increment will try to find the pattern {S00E00} and will try to increment the episode number.
+- Increment Multiplier will multiply the episode index by this number so if the episode being parsed is S02E03 with a multiplier of 3 then it will start the new name as S02E07. Multiplier works best when all files to process have the same number of splits, so if you're splitting one single file into 5 different files then you should use a multiplier of 5.
+- Use {i} to use auto increment number starting at 1.
+- If you don't use {i} it will be automatically appended to the end of the file so that names don't collide.</value>
+  </data>
 </root>
